@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+	<!-- declare a content type to eliminate duplicated file extensions -->
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            id="net.bioclipse.biojava.ui.sequenceType"
+            name="sequence"
+            base-type="org.eclipse.core.runtime.text"
+			file-extensions="gbk,fasta,embl,seq">
+      </content-type>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="net.bioclipse.biojava.ui.editors.SequenceEditor"
+            contributorClass="net.bioclipse.biojava.ui.editors.SequenceEditorContributor"
+            icon="icons/sequence4.gif"
+            id="net.bioclipse.biojava.ui.editors.SequenceEditor"
+            name="Sequence Editor">
+            <contentTypeBinding
+                  contentTypeId="net.bioclipse.biojava.ui.sequenceType">
+            </contentTypeBinding>
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent 
+            contentProvider="net.bioclipse.biojava.ui.views.SequenceContentProvider"
+            id="net.bioclipse.biojava.ui.views.SequenceContent"
+            labelProvider="net.bioclipse.biojava.ui.views.SequenceLabelProvider"
+            name="Sequence Content">
+         <triggerPoints>
+         <and>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+            <or>
+            <test
+            	forcePluginActivation="true"
+            	property="org.eclipse.core.resources.extension"
+            	value="fasta"/>
+            <test
+            	forcePluginActivation="true"
+            	property="org.eclipse.core.resources.extension"
+            	value="embl"/>
+            <test
+            	forcePluginActivation="true"
+            	property="org.eclipse.core.resources.extension"
+            	value="gbk"/>
+            <test
+            	forcePluginActivation="true"
+            	property="org.eclipse.core.resources.extension"
+            	value="seq"/>
+            </or>
+         </and>
+         </triggerPoints>
+      </navigatorContent>
+   </extension>
+
+<!-- Add SequenceContent to expand Sequences with BioJava -->
+<extension
+      point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding
+            viewerId="net.bioclipse.navigator">
+            <includes>
+            <contentExtension
+                  pattern="net.bioclipse.biojava.ui.views.SequenceContent">
+            </contentExtension>
+            </includes>
+      </viewerContentBinding>
+</extension>
+
+<!-- Object Contributions for Biojava -->
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <!--objectContribution
+            adaptable="false"
+            id="net.bioclipse.biojava.ui.actions.SequenceResource"
+            objectClass="net.bioclipse.core.domain.ISequence">
+         <action
+               class="net.bioclipse.biojava.ui.actions.TranslateDNAToRNAAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.TranslateDNAToRNAAction"
+               label="Iseq action"
+               menubarPath="additions"
+               tooltip="Do something with ISequence"/>
+      </objectContribution--> 
+      <objectContribution
+            adaptable="false"
+            id="net.bioclipse.biojava.ui.actions.DNASequenceResource"
+            objectClass="net.bioclipse.core.domain.IDNASequence">
+         <action
+               class="net.bioclipse.biojava.ui.actions.TranslateDNAToRNAAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.TranslateDNAToRNAAction"
+               label="Translate DNA to RNA"
+               menubarPath="additions"
+               tooltip="Translate the selected sequence to RNA"/>
+         <action
+               class="net.bioclipse.biojava.ui.actions.TranslateDNAToProteinAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.TranslateDNAToProteinAction"
+               label="Translate DNA to Protein"
+               menubarPath="additions"
+               tooltip="Translate the selected sequence to RNA"/>
+         <!--action
+               class="net.bioclipse.biojava.ui.actions.ComplementDNAAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.ComplementDNAAction"
+               label="Complement DNA"
+               menubarPath="additions"
+               tooltip="Complement the selected sequence"/>
+         <action
+               class="net.bioclipse.biojava.ui.actions.RevComplementDNAAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.RefComplementDNAAction"
+               label="ReverseComplement DNA"
+               menubarPath="additions"
+               tooltip="Reverse complement the selected sequence"/-->
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.bioclipse.biojava.ui.actions.RNASequenceResource"
+            objectClass="net.bioclipse.core.domain.IRNASequence">
+         <action
+               class="net.bioclipse.biojava.ui.actions.TranslateRNAToDNAAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.TranslateRNAToDNAAction"
+               label="Translate RNA to DNA"
+               menubarPath="additions"
+               tooltip="Translate the selected RNA sequence to DNA"/>
+         <action
+               class="net.bioclipse.biojava.ui.actions.TranslateRNAToProteinAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.TranslateRNAToProteinAction"
+               label="Translate RNA to Protein"
+               menubarPath="additions"
+               tooltip="Translate the selected RNA sequence to Protein"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="net.bioclipse.biojava.ui.actions.AASequenceResource"
+            objectClass="net.bioclipse.core.domain.IAASequence">
+               <action
+               class="net.bioclipse.biojava.ui.actions.LongRunningAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.LongRunningAction"
+               label="Long protein action"
+               menubarPath="additions"
+               tooltip="Long running operation on an IAASequence"/>
+               <action
+               class="net.bioclipse.biojava.ui.actions.FailingLongRunningAction"
+               enablesFor="1"
+               icon="icons/sequence3.gif"
+               id="net.bioclipse.biojava.ui.actions.FailingLongRunningAction"
+               label="Failing long protein action"
+               menubarPath="additions"
+               tooltip="Long running operation on an IAASequence that fails"/>
+      </objectContribution>
+
+
+
+
+      <objectContribution
+            id="net.bioclipse.biojava.ui.filecontribution"
+            objectClass="org.eclipse.core.resources.IFile">
+        <visibility>
+			<objectState
+                  name="contentTypeId"
+                  value="net.bioclipse.biojava.ui.sequenceType"/>
+        </visibility>
+          <action
+               class="net.bioclipse.biojava.ui.actions.LongRunningAction"
+               id="net.bioclipse.biojava.ui.actions.LongRunningActionFILE"
+               label="Long running operation on File"
+               icon="icons/sequence3.gif"
+               definitionId="net.bioclipse.biojava.ui.LongRunningCommand">
+         </action>
+         <action
+               class="net.bioclipse.biojava.ui.actions.FailingLongRunningAction"
+               id="net.bioclipse.biojava.ui.actions.FailingLongRunningActionFILE"
+               label="Failing Long running operation on File"
+               icon="icons/sequence3.gif">
+         </action>
+      </objectContribution>
+
+   </extension>
+
+	   <extension
+         point="org.eclipse.ui.commands">
+         <category
+               id="net.bioclipse.biojava.ui.category"
+               name="BiojavaCategory">
+         </category>
+      <command
+            id="net.bioclipse.biojava.ui.LongRunningCommand"
+            categoryId="net.bioclipse.biojava.ui.category"
+            name="LongRunningCommand"/>
+   </extension>
+
+  <extension point="org.eclipse.ui.menus">
+     <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
+        <command commandId="net.bioclipse.biojava.ui.LongRunningCommand"
+              id="net.bioclipse.biojava.ui.LongRunningCommandContribution"
+              label="Long running command action"
+              style="push">
+           <visibleWhen checkEnabled="false">
+                <reference definitionId="net.bioclipse.biojava.ui.sequenceType"/>
+           </visibleWhen>
+        </command>
+     </menuContribution>
+  </extension>
+
+
+</plugin>
