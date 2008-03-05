@@ -288,14 +288,6 @@ public class BiojavaManager implements IBiojavaManager {
 	}
 
 	/**
-	 * Return an identifier of this manager as nothing else is applicable.
-	 */
-	public String toString() {
-		return "biojava";
-	}
-
-
-	/**
 	 * Convert a BiojavaDNASequence into a BiojavaRNASequence. Biological meaning: Transcription
 	 * @throws IllegalArgumentException 
 	 */
@@ -372,6 +364,11 @@ public class BiojavaManager implements IBiojavaManager {
 		}
 
 		return new BiojavaAASequence(rseq);
+	}
+
+	@Override
+	public String getNamespace() {
+		return "biojava";
 	}
 
 }

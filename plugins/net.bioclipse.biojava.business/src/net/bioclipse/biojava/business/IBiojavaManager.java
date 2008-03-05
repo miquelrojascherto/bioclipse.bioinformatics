@@ -25,12 +25,13 @@ import net.bioclipse.biojava.domain.BiojavaSequence;
 import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.Recorded;
 import net.bioclipse.core.business.BioclipseException;
+import net.bioclipse.core.business.IBioclipseManager;
 import net.bioclipse.core.domain.ISequence;
 
 /**
  * @author jonalv, ola
  */
-public interface IBiojavaManager {
+public interface IBiojavaManager extends IBioclipseManager {
 
 	/**
 	 * Enum over the sequence formats supported by the Biojavamanager
