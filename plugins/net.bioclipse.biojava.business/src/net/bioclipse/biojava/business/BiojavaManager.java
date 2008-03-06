@@ -20,8 +20,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
+
+import net.bioclipse.biojava.domain.BiojavaAASequence;
+import net.bioclipse.biojava.domain.BiojavaDNASequence;
+import net.bioclipse.biojava.domain.BiojavaRNASequence;
+import net.bioclipse.biojava.domain.BiojavaSequence;
+import net.bioclipse.biojava.domain.BiojavaSequenceList;
+import net.bioclipse.core.business.BioclipseException;
 
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.DNATools;
@@ -33,22 +39,8 @@ import org.biojava.utils.ChangeVetoException;
 import org.biojavax.Namespace;
 import org.biojavax.RichObjectFactory;
 import org.biojavax.bio.db.HashRichSequenceDB;
-import org.biojavax.bio.db.RichSequenceDB;
-import org.biojavax.bio.db.RichSequenceDBLite;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
-import org.biojavax.bio.seq.io.RichSequenceBuilder;
-import org.biojavax.bio.seq.io.RichSequenceBuilderFactory;
-import org.biojavax.bio.seq.io.SimpleRichSequenceBuilder;
-
-import net.bioclipse.biojava.business.IBiojavaManager.SequenceFormat;
-import net.bioclipse.biojava.domain.BiojavaAASequence;
-import net.bioclipse.biojava.domain.BiojavaDNASequence;
-import net.bioclipse.biojava.domain.BiojavaRNASequence;
-import net.bioclipse.biojava.domain.BiojavaSequence;
-import net.bioclipse.biojava.domain.BiojavaSequenceList;
-import net.bioclipse.core.business.BioclipseException;
-import net.bioclipse.core.domain.ISequence;
 /**
  * Manager for BioJava. Performs the actual BioJava calls.
  * @author ola
@@ -366,7 +358,6 @@ public class BiojavaManager implements IBiojavaManager {
 		return new BiojavaAASequence(rseq);
 	}
 
-	@Override
 	public String getNamespace() {
 		return "biojava";
 	}
