@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.core.Recorded;
 import net.bioclipse.core.domain.BioObject;
-import net.bioclipse.core.domain.BioObjectList;
+import net.bioclipse.core.domain.BioList;
 import net.bioclipse.core.domain.ISequence;
 
 /**
@@ -25,7 +25,7 @@ import net.bioclipse.core.domain.ISequence;
  * @author ola
  *
  */
-public class BiojavaSequenceList extends BioObjectList<BiojavaSequence> {
+public class BiojavaSequenceList extends BioList<BiojavaSequence> {
 
 	public BiojavaSequenceList() {
 		super();
