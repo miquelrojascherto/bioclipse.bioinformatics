@@ -35,10 +35,28 @@ import static org.junit.Assert.*;
 
 public class SequenceContentProviderTest {
 
+	IWorkspaceRoot wsRoot;
+	IProject testProject;
+	Map<String, IFile> files;
 	
 	@Before
 	public void setup() {
 		
+		//Get WS root
+		wsRoot = ResourcesPlugin.getWorkspace().getRoot();
+
+		//Create the project
+		testProject = wsRoot.getProject("UnitTestProject");
+
+		//Create WS with data
+		try {
+			files =createWorkspaceWithData();
+		} catch (CoreException e1) {
+			fail(e1.getMessage());
+		} catch (IOException e1) {
+			fail(e1.getMessage());
+		}
+
 
 		//Introduce the allowed formats
 		try{
@@ -56,11 +74,17 @@ public class SequenceContentProviderTest {
 		}		
 	}
 
+	
+//	@Test
+//	public void testViewer() throws CoreException, IOException {
+//
+//
+//	}
+	
+	
+	
 	@Test
 	public void testGetChildren() throws CoreException, IOException {
-
-		//Create WS with data
-		Map<String, IFile> files =createWorkspaceWithData();
 
 		//Create ContentProvider to test
 		SequenceContentProvider provider=new SequenceContentProvider();
@@ -117,11 +141,11 @@ public class SequenceContentProviderTest {
 	 * @throws IOException
 	 */
 	private Map<String, IFile> createWorkspaceWithData() throws CoreException, IOException {
-		//Get WS root
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-		//Create the project
-		IProject project = root.getProject("UnitTestProject");
+//		//Get WS root
+//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+//
+//		//Create the project
+//		IProject project = root.getProject("UnitTestProject");
 		
 		IProgressMonitor dummyMonitor=new IProgressMonitor(){
 
@@ -152,32 +176,33 @@ public class SequenceContentProviderTest {
 
 		};
 		
-		project.create(dummyMonitor);
+		if (!(testProject.exists()))
+			testProject.create(dummyMonitor);
 		
 		//Open project
-		project.open(dummyMonitor);
-		IPath projectPath = project.getFullPath();
+		testProject.open(dummyMonitor);
+		IPath projectPath = testProject.getFullPath();
 
 		//Set up return map
 		Map<String, IFile> files=new HashMap<String, IFile>();
 
 		//Create files
 		IPath gbkPath= projectPath.append("sequence.gbk");
-		IFile gbkFile = root.getFile(gbkPath);
+		IFile gbkFile = wsRoot.getFile(gbkPath);
 		InputStream gbkIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence.gbk");
 		gbkFile.create(gbkIS,true,dummyMonitor);
 		gbkIS.close();		
 		files.put("sequence.gbk", gbkFile);
 
 		IPath gbkFailPath= projectPath.append("sequence_fail.gbk");
-		IFile gbkFailFile = root.getFile(gbkFailPath);
+		IFile gbkFailFile = wsRoot.getFile(gbkFailPath);
 		InputStream gbkFailIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence_fail.gbk");
 		gbkFailFile.create(gbkFailIS,true,dummyMonitor);
 		gbkFailIS.close();		
 		files.put("sequence_fail.gbk", gbkFailFile);
 
 		IPath fastaPath= projectPath.append("sequence3.fasta");
-		IFile fastaFile = root.getFile(fastaPath);
+		IFile fastaFile = wsRoot.getFile(fastaPath);
 		InputStream fastaIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence3.fasta");
 		fastaFile.create(fastaIS,true,dummyMonitor);
 		fastaIS.close();		
