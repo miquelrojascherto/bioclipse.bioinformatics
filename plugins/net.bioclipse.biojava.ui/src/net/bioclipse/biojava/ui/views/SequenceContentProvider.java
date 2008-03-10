@@ -29,6 +29,7 @@ import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.domain.IAASequence;
+import net.bioclipse.core.domain.IBioObject;
 import net.bioclipse.core.domain.IDNASequence;
 import net.bioclipse.core.domain.IRNASequence;
 import net.bioclipse.core.domain.ISequence;
@@ -47,6 +48,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * This ContentProvider hooks into the CNF to list if IResource contains one 
@@ -118,16 +120,14 @@ IResourceChangeListener, IResourceDeltaVisitor {
 	 * If an ISequence, get the IResource
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof BiojavaSequenceList) {
-			BiojavaSequenceList seq = (BiojavaSequenceList) element;
-			return seq.getResource();
-		} 
-		else if (element instanceof ISequence) {
-			//TODO?
+
+		if (element instanceof IBioObject) {
+			IBioObject bobj=(IBioObject)element;
+			if (bobj.getResource()!=null) return bobj.getResource();
 		} 
 		else if (element instanceof IResource) {
 			IResource res=(IResource)element;
-			if (res!=null) return res;
+			if (res.getParent()!=null) return res.getParent();
 		} 
 		return null;
 	}
@@ -167,51 +167,69 @@ IResourceChangeListener, IResourceDeltaVisitor {
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 
-	       //we are only interested in POST_CHANGE events
-        if (event.getType() != IResourceChangeEvent.POST_CHANGE)
-           return;
-        IResourceDelta rootDelta = event.getDelta();
-        //get the delta, if any, for the documentation directory
-        IResourceDelta docDelta = rootDelta;
-        try {
+		//we are only interested in POST_CHANGE events
+		if (event.getType() != IResourceChangeEvent.POST_CHANGE)
+			return;
+		IResourceDelta rootDelta = event.getDelta();
+		//get the delta, if any, for the documentation directory
+		IResourceDelta docDelta = rootDelta;
+		try {
 			docDelta.accept(this);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-        if (docDelta == null)
-           return;
-	
+		if (docDelta == null)
+			return;
+
 	}
 
 	/**
-	 * 
+	 * Handle deltas for resource changes
 	 */
 	public boolean visit(IResourceDelta delta) throws CoreException {
-		
-		//Only care about IFile
-		if (delta.getResource()==null) return true;
-		if (!(delta.getResource() instanceof IFile)) return true;
-		
-		IFile file = (IFile) delta.getResource();
+
+		IResource resource=delta.getResource();
+
+		//Only care about IFile with correct extension
+		if (resource==null) return true;
+		if (!(resource.getType() == IResource.FILE && 
+				ISequence_EXT.contains(resource.getFileExtension().toUpperCase())))
+			return true;
+
+		final IFile file = (IFile) resource;
 
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED :
 			// handle added resource
-			System.out.println("Added resource: " + delta.getResource().getName());
-			updateModel(file);
+			System.out.println("Added resource: " + file.getName());
 			break;
 		case IResourceDelta.REMOVED :
 			// handle removed resource
-			System.out.println("Removed resource: " + delta.getResource().getName());
+			System.out.println("Removed resource: " + file.getName());
 			//TODO
 			break;
 		case IResourceDelta.CHANGED :
 			// handle changed resource
-			System.out.println("Changed resource: " + delta.getResource().getName());
-			updateModel(file);
-			viewer.refresh(file);
+			System.out.println("Changed resource: " + file.getName());
 			break;
 		}
+
+		//Update the model for the viewer
+		updateModel(file);
+
+		//Post the update to the viewer
+		Display display = viewer.getControl().getDisplay();
+		if (!display.isDisposed()) {
+			display.asyncExec(new Runnable() {
+				public void run() {
+					//make sure the viewer still exists
+					if (viewer.getControl().isDisposed())
+						return;
+					viewer.refresh(file);
+				}
+			});
+		}
+
 		return true;
 	}
 
