@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Export-Package: net.bioclipse.biojava.ui.actions,
  net.bioclipse.biojava.ui.views
+Import-Package: org.apache.log4j
