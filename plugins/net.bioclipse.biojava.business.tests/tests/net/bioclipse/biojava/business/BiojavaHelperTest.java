@@ -1,14 +1,15 @@
 package net.bioclipse.biojava.business;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.biojava.bio.seq.DNATools;
-import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SymbolList;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Tests the helper classes for Biojava

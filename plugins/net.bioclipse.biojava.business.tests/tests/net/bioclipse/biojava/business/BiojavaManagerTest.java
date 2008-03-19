@@ -12,11 +12,13 @@
  ******************************************************************************/
 package net.bioclipse.biojava.business;
 
-import java.io.ByteArrayInputStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 
-import net.bioclipse.biojava.business.BiojavaManager;
-import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.biojava.domain.BiojavaRNASequence;
@@ -29,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import testData.TestData;
-import static org.junit.Assert.*;
 
 /**
  * @author jonalv, ola
