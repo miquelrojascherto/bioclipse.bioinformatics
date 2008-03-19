@@ -11,10 +11,6 @@
  ******************************************************************************/
 package net.bioclipse.biojava.business;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
@@ -78,12 +74,12 @@ public class BiojavaHelper {
 
 		for(int i = 1; i <= aa.length(); i++){
 			System.out.println("aa:" + aa.symbolAt(i).getName());
-			Set set= rtt.untranslate(aa.symbolAt(i));
-			for(Iterator it=set.iterator();it.hasNext();){
-				Object obj=it.next();
-				if (obj instanceof Symbol) {
-					Symbol sym = (Symbol) obj;
-					System.out.println("   -> "+ sym.getName());
+
+			for(Object item : rtt.untranslate(aa.symbolAt(i))) {
+				
+				if (item instanceof Symbol) {
+					Symbol sym = (Symbol)item;
+					System.out.println("   -> " + sym.getName());
 				}
 			}
 		}
