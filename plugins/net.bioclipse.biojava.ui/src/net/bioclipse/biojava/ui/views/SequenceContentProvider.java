@@ -11,32 +11,19 @@
  ******************************************************************************/
 package net.bioclipse.biojava.ui.views;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-
 
 import net.bioclipse.biojava.business.Activator;
-import net.bioclipse.biojava.business.BiojavaManager;
 import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.business.BioclipseException;
-import net.bioclipse.core.domain.IAASequence;
 import net.bioclipse.core.domain.IBioObject;
-import net.bioclipse.core.domain.IDNASequence;
-import net.bioclipse.core.domain.IRNASequence;
 import net.bioclipse.core.domain.ISequence;
 
-import org.apache.log4j.Logger;
-import org.biojavax.bio.db.HashRichSequenceDB;
-import org.biojavax.bio.db.RichSequenceDB;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -59,10 +46,6 @@ import org.eclipse.swt.widgets.Display;
 public class SequenceContentProvider implements ITreeContentProvider, 
 IResourceChangeListener, IResourceDeltaVisitor {
 
-//	private static final Logger logger = Activator.getLogManager()
-//	.getLogger(SequenceContentProvider.class.toString());
-
-
 	private static final Object[] NO_CHILDREN = new Object[0];
 
 	private final List<String> ISequence_EXT;
@@ -75,7 +58,9 @@ IResourceChangeListener, IResourceDeltaVisitor {
 
 	//Register us as listener for resource changes
 	public SequenceContentProvider() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				this,
+				IResourceChangeEvent.POST_CHANGE);
 		cachedModelMap = new HashMap<IFile, BiojavaSequenceList>();
 		ISequence_EXT=new ArrayList<String>();
 		registerFileExtensions();
@@ -89,31 +74,34 @@ IResourceChangeListener, IResourceDeltaVisitor {
 		ISequence_EXT.add("FASTA");
 		ISequence_EXT.add("GBK");
 		//TODO: add more file extensions
-
 	}
 
 	public Object[] getChildren(Object parentElement) {
-		Object[] children = null;
+		
 		if(parentElement instanceof IFile) {
-			/* possible model file */
 			IFile modelFile = (IFile) parentElement;
-			if(ISequence_EXT.contains(modelFile.getFileExtension().toUpperCase())) {				
-				BiojavaSequenceList col=cachedModelMap.get(modelFile);
-				if (col!=null){
-					children = col.toArray(new ISequence[0]);
+			if (ISequence_EXT.contains(
+					modelFile.getFileExtension().toUpperCase())) {	
+				
+				BiojavaSequenceList col = cachedModelMap.get(modelFile);
+				
+				if (col != null) {
+					
+					Object[] children = col.toArray(new ISequence[0]);
 					return children != null ? children : NO_CHILDREN;
-				}else{
-					if (updateModel(modelFile)!=null){
-						BiojavaSequenceList col2=cachedModelMap.get(modelFile);
-						if (col2!=null){
-							children = col2.toArray(new ISequence[0]);
-							return children != null ? children : NO_CHILDREN;
-						}						
-					}
+				}else if (updateModel(modelFile) != null) {
+					
+					BiojavaSequenceList col2 = cachedModelMap.get(modelFile);
+					if (col2 != null) {
+						
+						Object[] children = col2.toArray(new ISequence[0]);
+						return children != null ? children : NO_CHILDREN;
+					}						
 				}
 			}
-		}   
-		return children != null ? children : NO_CHILDREN;
+		}
+		
+		return NO_CHILDREN;
 	}
 
 	/**
@@ -136,7 +124,9 @@ IResourceChangeListener, IResourceDeltaVisitor {
 		if (element instanceof ISequence) {
 			return false;		
 		} else if(element instanceof IFile) {
-			return ISequence_EXT.contains(((IFile) element).getFileExtension().toUpperCase());
+			return ISequence_EXT.contains(
+					((IFile) element).getFileExtension().toUpperCase()
+			       );
 		}
 		return false;
 	}
@@ -193,7 +183,8 @@ IResourceChangeListener, IResourceDeltaVisitor {
 		//Only care about IFile with correct extension
 		if (resource==null) return true;
 		if (!(resource.getType() == IResource.FILE && 
-				ISequence_EXT.contains(resource.getFileExtension().toUpperCase())))
+				ISequence_EXT.contains(
+						resource.getFileExtension().toUpperCase())))
 			return true;
 
 		final IFile file = (IFile) resource;
@@ -240,12 +231,15 @@ IResourceChangeListener, IResourceDeltaVisitor {
 	 */ 
 	private synchronized BiojavaSequenceList updateModel(IFile modelFile) { 
 
-		if(ISequence_EXT.contains(modelFile.getFileExtension().toUpperCase()) ) {
+		if(ISequence_EXT.contains(modelFile.getFileExtension().toUpperCase())) {
 			BiojavaSequenceList model;
 			if (modelFile.exists()) {
 
 				try {
-					model= biojava.loadSequences(modelFile.getLocation().toOSString());
+					model
+					    = biojava.loadSequences(
+					    		modelFile.getLocation().toOSString()
+					      );
 				} catch (IOException e) {
 					return null;
 				} catch (BioclipseException e) {
@@ -253,7 +247,11 @@ IResourceChangeListener, IResourceDeltaVisitor {
 				}
 
 				if (model==null) return null;
-				System.out.println("File: " + modelFile + " contained: " + model.size() + " ISequences");
+				System.out.println("File: "
+						           + modelFile
+						           + " contained: "
+						           + model.size()
+						           + " ISequences");
 
 				cachedModelMap.put(modelFile, model);
 				return model;
