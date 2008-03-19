@@ -12,10 +12,9 @@
  ******************************************************************************/
 package net.bioclipse.biojava.domain;
 
-import org.biojavax.bio.seq.RichSequence;
-
 import net.bioclipse.core.domain.IAASequence;
-import net.bioclipse.core.domain.IDNASequence;
+
+import org.biojavax.bio.seq.RichSequence;
 
 public class BiojavaAASequence extends BiojavaSequence 
                                 implements IAASequence {

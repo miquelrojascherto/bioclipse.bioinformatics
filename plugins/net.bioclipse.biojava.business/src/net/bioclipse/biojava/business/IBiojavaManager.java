@@ -13,10 +13,8 @@
 
 package net.bioclipse.biojava.business;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
@@ -26,7 +24,6 @@ import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.Recorded;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.business.IBioclipseManager;
-import net.bioclipse.core.domain.ISequence;
 
 /**
  * @author jonalv, ola

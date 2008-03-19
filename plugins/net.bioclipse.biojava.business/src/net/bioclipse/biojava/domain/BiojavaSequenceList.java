@@ -12,13 +12,7 @@
 package net.bioclipse.biojava.domain;
 
 
-import java.util.ArrayList;
-
-import net.bioclipse.biojava.business.IBiojavaManager;
-import net.bioclipse.core.Recorded;
-import net.bioclipse.core.domain.BioObject;
 import net.bioclipse.core.domain.BioList;
-import net.bioclipse.core.domain.ISequence;
 
 /**
  * Holds a number of BioJavaSequences in an arraylist
