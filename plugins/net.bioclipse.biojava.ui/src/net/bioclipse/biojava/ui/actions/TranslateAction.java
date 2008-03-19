@@ -15,9 +15,6 @@ import java.io.IOException;
 
 import net.bioclipse.biojava.business.Activator;
 import net.bioclipse.biojava.business.IBiojavaManager;
-import net.bioclipse.biojava.domain.BiojavaAASequence;
-import net.bioclipse.biojava.domain.BiojavaSequence;
-import net.bioclipse.core.domain.IAASequence;
 import net.bioclipse.core.domain.ISequence;
 
 import org.eclipse.jface.action.IAction;

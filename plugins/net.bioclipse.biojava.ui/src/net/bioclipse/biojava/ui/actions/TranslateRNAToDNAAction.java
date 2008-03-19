@@ -13,12 +13,7 @@ package net.bioclipse.biojava.ui.actions;
 
 import java.io.IOException;
 
-import net.bioclipse.biojava.domain.BiojavaAASequence;
-import net.bioclipse.core.domain.IAASequence;
 import net.bioclipse.core.domain.ISequence;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * Action to translate an ISequence to DNA

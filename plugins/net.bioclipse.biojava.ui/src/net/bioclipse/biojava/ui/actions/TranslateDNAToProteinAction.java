@@ -17,11 +17,6 @@ import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.core.domain.IDNASequence;
 import net.bioclipse.core.domain.ISequence;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.ActionDelegate;
-
 public class TranslateDNAToProteinAction extends TranslateAction{
 
 	@Override

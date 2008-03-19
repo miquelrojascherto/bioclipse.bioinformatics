@@ -11,21 +11,13 @@
  *******************************************************************************/
 package net.bioclipse.biojava.ui.editors;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -51,13 +43,8 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  */
 public class SequenceEditor extends MultiPageEditorPart implements IResourceChangeListener, IAdaptable{
 
-
-
 	/** The text editor used in page 1. */
 	private TextEditor textEditor;
-
-	/** Registered listeners */
-	private List<ISelectionChangedListener> selectionListeners;
 
 	/** Content of the file */
 	String content;
@@ -69,7 +56,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
 	public SequenceEditor() {
 		super();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		selectionListeners=new ArrayList<ISelectionChangedListener>();
 	}
 
 	/**
@@ -197,51 +183,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
 				}            
 			});
 		}
-	}
-
-	private String getContentsFromEditor(){
-
-		IEditorInput input=getEditorInput();
-		if (!(input instanceof IFileEditorInput)) {
-			System.out.println("Not FileEditorInput.");
-			//TODO: Close editor?
-			return null;
-		}
-		IFileEditorInput finput = (IFileEditorInput) input;
-		
-		IFile file=finput.getFile();
-		if (!(file.exists())){
-			System.out.println("File does not exist.");
-			//TODO: Close editor?
-			return null;
-		}
-
-//		return file.getFullPath().toFile();
-
-
-		InputStream instream;
-		try {
-			instream = file.getContents();
-			StringBuilder builder = new StringBuilder();
-
-			// read bytes until eof
-			for(int i = instream.read(); i != -1; i = instream.read())
-			{
-				builder.append((char)i);
-			}
-			instream.close();
-
-			return builder.toString();
-
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	/**
