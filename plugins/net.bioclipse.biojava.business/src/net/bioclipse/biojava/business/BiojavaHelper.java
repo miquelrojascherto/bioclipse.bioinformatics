@@ -11,6 +11,8 @@
  ******************************************************************************/
 package net.bioclipse.biojava.business;
 
+import org.apache.log4j.Logger;
+
 import org.biojava.bio.seq.RNATools;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
@@ -29,6 +31,7 @@ import org.biojava.bio.symbol.SymbolListViews;
  */
 public class BiojavaHelper {
 
+    private static final Logger logger = Logger.getLogger(BiojavaHelper.class);
 
 	/**
 	 * ReverseTranscribe RNA to DNA
@@ -72,14 +75,14 @@ public class BiojavaHelper {
 		ManyToOneTranslationTable rtt = RNATools.getGeneticCode("UNIVERSAL");
 		Symbol[] syms = new Symbol[aa.length()];
 
-		for(int i = 1; i <= aa.length(); i++){
-			System.out.println("aa:" + aa.symbolAt(i).getName());
+		for(int i = 1; i <= aa.length(); i++) {
+			if (logger.isDebugEnabled()) logger.debug("aa:" + aa.symbolAt(i).getName());
 
 			for(Object item : rtt.untranslate(aa.symbolAt(i))) {
 				
 				if (item instanceof Symbol) {
 					Symbol sym = (Symbol)item;
-					System.out.println("   -> " + sym.getName());
+					if (logger.isDebugEnabled()) logger.debug("   -> " + sym.getName());
 				}
 			}
 		}

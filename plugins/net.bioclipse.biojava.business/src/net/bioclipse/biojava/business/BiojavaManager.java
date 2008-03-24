@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
 
+import org.apache.log4j.Logger;
+
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.biojava.domain.BiojavaRNASequence;
@@ -47,10 +49,16 @@ import org.biojavax.bio.seq.RichSequenceIterator;
  *
  */
 public class BiojavaManager implements IBiojavaManager {
+    
+    private static final Logger logger = Logger.getLogger(BiojavaManager.class);
 
 	public BiojavaManager() {
-		//Introduce the allowed formats
-		   try{
+		// Introduce the allowed formats
+	   
+	    // TODO should this loop through classes so that failure to load
+	    //      class A doesn't prevent loading some class B listed after A?
+	    
+		   try {
 			   Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
 			   Class.forName("org.biojavax.bio.seq.io.FastaFormat");
 			   Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
@@ -61,9 +69,10 @@ public class BiojavaManager implements IBiojavaManager {
 			   Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
 		   }
 		   catch(ClassNotFoundException e){
-			   System.out.println("Class not found" + e);
+			   logger.error("Class not found" + e);
 		   }		
 	}
+	
 	
 	public String renderAs( SequenceFormat format, 
 			                BiojavaSequence seq) throws IOException {
@@ -72,11 +81,14 @@ public class BiojavaManager implements IBiojavaManager {
 			return seq.toFasta();
 		}
 
-
 		// TODO Auto-generated method stub
-		System.out.println("BioJavaManager.convertTo() with format: " + format.toString() + " is not implemented.");
-		throw new IllegalArgumentException("Format: " + format.toString() + " not supported.");
+		
+		logger.warn("BioJavaManager.convertTo() with format: "
+		        + format.toString() + " is not implemented.");
+		throw new IllegalArgumentException("Format: " + format.toString()
+		        + " not supported.");
 	}
+	
 
 	/**
 	 * Create sequence from a plain sequence string. Will set name to empty.
@@ -85,6 +97,7 @@ public class BiojavaManager implements IBiojavaManager {
 	public BiojavaSequence createSequence(String content) {
 		return createSequence("No Name", content);
 	}
+	
 
 	/**
 	 * Create sequence from a plain sequence string. Will set name to empty.
@@ -96,6 +109,7 @@ public class BiojavaManager implements IBiojavaManager {
 		return loadSequence(stream);
 	}
 
+	
 	/**
 	 * Create sequence from a name and a plain sequence string (content).
 	 * @throws ScriptingException 
@@ -130,6 +144,7 @@ public class BiojavaManager implements IBiojavaManager {
 		}
 	}
 
+	
 	/**
 	 * Load sequenceCollection from file
 	 * @throws IOException 
@@ -137,12 +152,13 @@ public class BiojavaManager implements IBiojavaManager {
 	 */
 	public BiojavaSequenceList loadSequences(String path) throws IOException, BioclipseException {
 		File file=new File(path);
-		if (file.canRead()==false){
+		if (file.canRead()==false) {
 			throw new IOException();
 		}
 		FileInputStream stream=new FileInputStream(file);
 		return loadSequences(stream);
 	}
+	
 
 	/**
 	 * Load sequenceCollection from InputStream
@@ -154,7 +170,7 @@ public class BiojavaManager implements IBiojavaManager {
 		BufferedInputStream bufferedStream=new BufferedInputStream(instream);
 
 		Namespace ns = RichObjectFactory.getDefaultNamespace();   
-		RichSequenceIterator seqit=null;
+		RichSequenceIterator seqit = null;
 		int noseqs=0;
 
 		try {
@@ -163,24 +179,26 @@ public class BiojavaManager implements IBiojavaManager {
 			throw new BioclipseException(e.getMessage());
 		}
 
-		if (seqit==null){
+		if (seqit == null) {
 			throw new BioclipseException("Sequence is null");
 		}
 
-		//Collection of sequences
+		// Collection of sequences
 		BiojavaSequenceList sequenceCollection=new BiojavaSequenceList();
 
-		//Add all sequences to collection
+		// Add all sequences to collection
 		try {
 			while (seqit.hasNext()){
 				noseqs++;
 				RichSequence rseq = seqit.nextRichSequence();
-				if (rseq!=null){
-					if (rseq.getAlphabet().getName().equals("DNA")){
+				if (rseq != null) {
+					if (rseq.getAlphabet().getName().equals("DNA")) {
 						sequenceCollection.add(new BiojavaDNASequence(rseq));
-					} else if (rseq.getAlphabet().getName().equals("RNA")) {
+					} 
+					else if (rseq.getAlphabet().getName().equals("RNA")) {
 						sequenceCollection.add(new BiojavaRNASequence(rseq));
-					} else if (rseq.getAlphabet().getName().equals("PROTEIN-TERM")) {
+					} 
+					else if (rseq.getAlphabet().getName().equals("PROTEIN-TERM")) {
 						sequenceCollection.add(new BiojavaAASequence(rseq));
 					}
 				}
@@ -195,8 +213,7 @@ public class BiojavaManager implements IBiojavaManager {
 
 		return sequenceCollection;
 	}
-	
-	
+
 	
 	/**
 	 * Load sequence from InputStream
@@ -204,7 +221,7 @@ public class BiojavaManager implements IBiojavaManager {
 	 */
 	public BiojavaSequence loadSequence(InputStream instream) {
 
-		//Buffer the inputstream
+		// Buffer the inputstream
 		BufferedInputStream bufferedStream=new BufferedInputStream(instream);
 
 		Namespace ns = RichObjectFactory.getDefaultNamespace();   
@@ -217,19 +234,19 @@ public class BiojavaManager implements IBiojavaManager {
 			throw new IllegalArgumentException("Could not parse input into a sequence.", e);
 		}
 
-		if (seqit==null){
-			System.out.println("Could not read any sequences.");
+		if (seqit == null) {
+			logger.warn("Could not read any sequences.");
 			return null;
 		}
 
 		//Database for sequences
-		HashRichSequenceDB db=new HashRichSequenceDB();
+		HashRichSequenceDB db = new HashRichSequenceDB();
 
-		//Iterate over sequences and put in array
-		//ArrayList<RichSequence> seqs=new ArrayList<RichSequence>();
-		RichSequence rseq=null;
+		// Iterate over sequences and put in array
+		// ArrayList<RichSequence> seqs=new ArrayList<RichSequence>();
+		RichSequence rseq = null;
 		try {
-			while (seqit.hasNext()){
+			while (seqit.hasNext()) {
 				noseqs++;
 				rseq = seqit.nextRichSequence();
 				if (rseq!=null)
@@ -244,41 +261,45 @@ public class BiojavaManager implements IBiojavaManager {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 
-		if (noseqs>1)
-			System.out.println("Biojava expected only 1 sequence but parsed " 
+		if (noseqs > 1) {
+			logger.warn("Biojava expected only 1 sequence but parsed " 
 					           + noseqs + " sequences successfully." +
 					           " Returning only last sequence.");
-
-		if (rseq.getAlphabet().getName().equals("DNA")){
+		}
+		
+		if (rseq.getAlphabet().getName().equals("DNA")) {
 			return new BiojavaDNASequence(rseq);
-		} else if (rseq.getAlphabet().getName().equals("RNA")) {
+		} 
+		else if (rseq.getAlphabet().getName().equals("RNA")) {
 			return new BiojavaRNASequence(rseq);
-		} else if (rseq.getAlphabet().getName().equals("PROTEIN-TERM")) {
+		} 
+		else if (rseq.getAlphabet().getName().equals("PROTEIN-TERM")) {
 			return new BiojavaAASequence(rseq);
 		}
 
-
 		return new BiojavaSequence(rseq);
-
-
 	}
+	
 
 	public void saveSequence(BiojavaSequence seq) {
 		// TODO Auto-generated method stub
-		System.out.println("BioJavaManager.saveSequence() FIXME");
+		logger.warn("BioJavaManager.saveSequence() FIXME");
 	}
+	
 
 	public void saveSequence(BiojavaSequence seq, String path) {
 		// TODO Auto-generated method stub
-		System.out.println("BioJavaManager.saveSequence() FIXME");
+		logger.warn("BioJavaManager.saveSequence() FIXME");
 	}
+	
 
 	public void saveSequence(BiojavaSequence seq, String path,
 			SequenceFormat format) {
 		// TODO Auto-generated method stub
-		System.out.println("BioJavaManager.saveSequence() FIXME");
+		logger.warn("BioJavaManager.saveSequence() FIXME");
 	}
 
+	
 	/**
 	 * Convert a BiojavaDNASequence into a BiojavaRNASequence. Biological meaning: Transcription
 	 * @throws IllegalArgumentException 
@@ -290,7 +311,7 @@ public class BiojavaManager implements IBiojavaManager {
 		SymbolList symlist;
 		try {
 			symlist = DNATools.toRNA(seq);
-			rseq=RichSequence.Tools.createRichSequence(seq.getName(), symlist);
+			rseq = RichSequence.Tools.createRichSequence(seq.getName(), symlist);
 		} catch (IllegalAlphabetException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -298,13 +319,14 @@ public class BiojavaManager implements IBiojavaManager {
 		return new BiojavaRNASequence(rseq);
 	}
 
+	
 	/**
 	 * Convert a BiojavaRNASequence into a BiojavaDNASequence. Biological meaning: Reverse-transcription
 	 * @throws IllegalArgumentException 
 	 */
 	public BiojavaDNASequence RNAtoDNA(BiojavaRNASequence sequence) {
-		RichSequence seq=sequence.getRichSequence();
-		RichSequence rseq=null;
+		RichSequence seq = sequence.getRichSequence();
+		RichSequence rseq = null;
 
 		SymbolList rna=seq.getInternalSymbolList();
 		try {
@@ -328,8 +350,8 @@ public class BiojavaManager implements IBiojavaManager {
 		RichSequence rseq=null;
 
 		try {
-			SymbolList aa= RNATools.translate(seq.getInternalSymbolList());
-			rseq=RichSequence.Tools.createRichSequence(seq.getName(), aa);
+			SymbolList aa = RNATools.translate(seq.getInternalSymbolList());
+			rseq = RichSequence.Tools.createRichSequence(seq.getName(), aa);
 		} catch (IllegalAlphabetException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -343,8 +365,8 @@ public class BiojavaManager implements IBiojavaManager {
 	 * @throws IllegalArgumentException 
 	 */
 	public BiojavaAASequence DNAToProtein(BiojavaDNASequence sequence) {
-		RichSequence seq=sequence.getRichSequence();
-		RichSequence rseq=null;
+		RichSequence seq = sequence.getRichSequence();
+		RichSequence rseq = null;
 
 		try {
 			SymbolList rna = DNATools.toRNA(seq);
@@ -357,9 +379,9 @@ public class BiojavaManager implements IBiojavaManager {
 
 		return new BiojavaAASequence(rseq);
 	}
+	
 
 	public String getNamespace() {
 		return "biojava";
 	}
-
 }
