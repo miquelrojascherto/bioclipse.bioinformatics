@@ -11,7 +11,7 @@ public class StringUtils {
 	 * @param content
 	 * @return
 	 */
-	public static String removeUntilFirtNewline(String content){
+	public static String removeUntilFirstNewline(String content){
 
 		Pattern EVERYTHING_AFTER_FIRST_NEWLINE
 	      = Pattern.compile( "[^\\n\\r]*[\\n\\r]+(.*)$", Pattern.DOTALL );

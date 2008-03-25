@@ -52,25 +52,30 @@ public class BiojavaManager implements IBiojavaManager {
     
     private static final Logger logger = Logger.getLogger(BiojavaManager.class);
 
-	public BiojavaManager() {
+    private static final String[] FormatReaderClassNames = {
+        "org.biojavax.bio.seq.io.EMBLFormat",
+        "org.biojavax.bio.seq.io.FastaFormat",
+        "org.biojavax.bio.seq.io.GenbankFormat",
+        "org.biojavax.bio.seq.io.INSDseqFormat",
+        "org.biojavax.bio.seq.io.EMBLxmlFormat",
+        "org.biojavax.bio.seq.io.UniProtFormat",
+        "org.biojavax.bio.seq.io.UniProtXMLFormat",
+        "org.biojavax.bio.seq.io.RichSequenceFormat" 
+    };
+    
+	
+    public BiojavaManager() {
 		// Introduce the allowed formats
-	   
-	    // TODO should this loop through classes so that failure to load
-	    //      class A doesn't prevent loading some class B listed after A?
 	    
+        for (String name : FormatReaderClassNames) {
 		   try {
-			   Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
-			   Class.forName("org.biojavax.bio.seq.io.FastaFormat");
-			   Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
-			   Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
-			   Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
-			   Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
-			   Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
-			   Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
+		       logger.debug("Loading format reader: " + name);
+		       Class.forName(name);
 		   }
-		   catch(ClassNotFoundException e){
-			   logger.error("Class not found" + e);
-		   }		
+		   catch(ClassNotFoundException e) {
+			   logger.error("Class " + name + "not found: " + e);
+		   }
+        }
 	}
 	
 	

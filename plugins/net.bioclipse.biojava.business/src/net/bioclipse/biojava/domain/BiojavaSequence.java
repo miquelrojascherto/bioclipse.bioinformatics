@@ -47,12 +47,12 @@ public class BiojavaSequence extends BioObject implements ISequence {
 	@Recorded
 	public String getPlainSequence() throws IOException {
 		String fastaString=toFasta();
-		String plainString=StringUtils.removeUntilFirtNewline(fastaString);
+		String plainString=StringUtils.removeUntilFirstNewline(fastaString);
 		return plainString;
 	}
 
 	/**
-	 * Convert RichSequence to FAST and return as String
+	 * Convert RichSequence to FASTA and return as String
 	 * @throws IOException 
 	 */
 	public String toFasta() throws IOException {
