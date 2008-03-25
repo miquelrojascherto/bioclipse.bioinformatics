@@ -11,6 +11,8 @@
  ******************************************************************************/
 package net.bioclipse.biojava.business;
 
+import net.bioclipse.core.util.LogUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -27,6 +29,8 @@ public class Activator extends Plugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	private static final Logger logger = Logger.getLogger(Activator.class);
 	
 //	private ApplicationContext applicationContext;
 	private ServiceTracker finderTracker;
@@ -73,7 +77,8 @@ public class Activator extends Plugin {
 		try {
 			manager = (IBiojavaManager) finderTracker.waitForService(1000*10);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.warn("Exception occurred while attempting to get the BiojavaManager" + e);
+		    LogUtils.debugTrace(logger, e);
 		}
 		if(manager == null) {
 			throw new IllegalStateException("Could not get the biojava manager");

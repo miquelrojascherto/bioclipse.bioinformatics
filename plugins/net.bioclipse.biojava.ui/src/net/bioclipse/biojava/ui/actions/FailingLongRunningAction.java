@@ -15,6 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import net.bioclipse.core.jobs.AbstractJob;
 import net.bioclipse.core.jobs.ActionJobRunner;
+import net.bioclipse.core.util.LogUtils;
+
+import org.apache.log4j.Logger;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -26,6 +29,10 @@ import org.eclipse.ui.actions.ActionDelegate;
 
 public class FailingLongRunningAction extends ActionDelegate{
 
+    private static final Logger logger = 
+        Logger.getLogger(FailingLongRunningAction.class);
+    
+    
 	/**
 	 * This action is to demonstrate long running operations in Bioclipse.
 	 */
@@ -104,7 +111,7 @@ public class FailingLongRunningAction extends ActionDelegate{
 			try {
 				Thread.sleep(ms * 1);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				LogUtils.debugTrace(logger, e);
 			}
 		}
 	}

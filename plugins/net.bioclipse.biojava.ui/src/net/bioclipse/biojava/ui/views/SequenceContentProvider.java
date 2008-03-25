@@ -180,7 +180,7 @@ public class SequenceContentProvider implements ITreeContentProvider,
 		} catch (CoreException e) {
 			logger.error("SequenceContentProvider.resourceChanged() caught "
 			        + "CoreException visiting docDelta");
-		    logger.debug(LogUtils.getTraceStringFrom(e));
+		    logger.debug(LogUtils.traceStringFrom(e));
 		}
 		if (docDelta == null)
 			return;
