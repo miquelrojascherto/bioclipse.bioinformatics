@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.biojava.domain.BiojavaRNASequence;
@@ -26,6 +27,7 @@ import net.bioclipse.biojava.domain.BiojavaSequence;
 import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.domain.ISequence;
+import net.bioclipse.core.util.LogUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +40,8 @@ import testData.TestData;
  */
 public class BiojavaManagerTest {
 
+    private Logger logger = Logger.getLogger(BiojavaManagerTest.class);
+    
 	private IBiojavaManager biojava;
 
 	@Before
@@ -169,10 +173,10 @@ public class BiojavaManagerTest {
 			seq = biojava.loadSequence( TestData.getPathToAAFastaSequence() );
 //			seq = biojava.loadSequence( TestData.getPathToFosbFastaSequence() );
 		} catch (IOException e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail (e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail (e.getMessage());
 		}
 		assertNotNull(seq);
@@ -181,7 +185,7 @@ public class BiojavaManagerTest {
 		try {
 			assertEquals( "SEQUENCE", seq.getPlainSequence().trim() );
 		} catch (IOException e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail (e.getMessage());
 		}
 	}
@@ -209,7 +213,7 @@ public class BiojavaManagerTest {
 		} catch (IOException e) {
 			fail(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail (e.getMessage());
 		}
 
@@ -221,10 +225,10 @@ public class BiojavaManagerTest {
 		try {
 			seq = biojava.loadSequence( TestData.getPathToDNAFastaSequence() );
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			LogUtils.debugTrace(logger, e1);
 			fail(e1.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail (e.getMessage());
 		}
 
@@ -239,10 +243,10 @@ public class BiojavaManagerTest {
 			rnaSeq = biojava.DNAtoRNA(dnaSeq);
 			assertEquals( "GAUUACA", rnaSeq.getPlainSequence().trim().toUpperCase() );
 		} catch (IOException e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		}
 	}
@@ -263,10 +267,10 @@ public class BiojavaManagerTest {
 			assertEquals( "LLAKRYD", rnaSeq.getPlainSequence().trim().toUpperCase() );
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		}
 	}
@@ -302,10 +306,10 @@ public class BiojavaManagerTest {
 			//Check correctly converted
 			assertEquals( "GATTACA", dnaSeq.getPlainSequence().trim().toUpperCase() );
 		} catch (IOException e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		}
 	}	
@@ -325,7 +329,7 @@ public class BiojavaManagerTest {
 			assertEquals(341, seq1.getPlainSequence().length());
 			assertEquals(342, seq2.getPlainSequence().length());
 		} catch (IOException e) {
-			e.printStackTrace();
+			LogUtils.debugTrace(logger, e);
 			fail(e.getMessage());
 		}
 	}
