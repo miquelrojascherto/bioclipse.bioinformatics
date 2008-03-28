@@ -86,4 +86,9 @@ public class BiojavaSequence extends BioObject implements ISequence {
 	public String getName() {
 		return richSequence.getName();
 	}
+
+	public Object getAdapter(Class adapter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
