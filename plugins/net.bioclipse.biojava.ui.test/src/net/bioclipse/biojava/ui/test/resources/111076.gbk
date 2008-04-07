@@ -1,0 +1,33 @@
+LOCUS       D31461                    32 aa            linear   ROD 30-MAY-1997
+DEFINITION  T-cell receptor delta chain BDN7, thymus - mouse (fragment).
+ACCESSION   D31461
+VERSION     D31461  GI:111076
+DBSOURCE    pir: locus D31461;
+            
+            summary: #length 32 #checksum 1076
+            ;
+            superfamily: immunoglobulin V region; immunoglobulin homology
+            ;
+            PIR dates: 05-Oct-1989 #sequence_revision 05-Oct-1989 #text_change
+            30-May-1997
+            ;
+            punctuation in sequence.
+KEYWORDS    T-cell receptor.
+SOURCE      Mus musculus (house mouse)
+  ORGANISM  Mus musculus
+            Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+            Mammalia; Eutheria; Rodentia; Sciurognathi; Muridae; Murinae; Mus.
+REFERENCE   1  (residues 1 to 32)
+  AUTHORS   Lacy,M.J., McNeil,L.K., Roth,M.E. and Kranz,D.M.
+  TITLE     T-cell receptor delta-chain diversity in peripheral lymphocytes
+  JOURNAL   Proc. Natl. Acad. Sci. U.S.A. 86 (3), 1023-1026 (1989)
+   PUBMED   2783779
+FEATURES             Location/Qualifiers
+     source          1..32
+                     /organism="Mus musculus"
+                     /db_xref="taxon:10090"
+     Protein         1..32
+                     /product="T-cell receptor delta chain BDN7, thymus"
+ORIGIN      
+        1 atyfcalmer vsrrgapdkl vfgqgtqvtv ep
+//
