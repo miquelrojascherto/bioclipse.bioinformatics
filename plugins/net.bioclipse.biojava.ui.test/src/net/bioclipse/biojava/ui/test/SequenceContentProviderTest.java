@@ -38,10 +38,10 @@ public class SequenceContentProviderTest {
 	IWorkspaceRoot wsRoot;
 	IProject testProject;
 	Map<String, IFile> files;
-	
+
 	@Before
-	public void setup() {
-		
+	public void setup() throws CoreException, IOException {
+
 		//Get WS root
 		wsRoot = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -49,13 +49,7 @@ public class SequenceContentProviderTest {
 		testProject = wsRoot.getProject("UnitTestProject");
 
 		//Create WS with data
-		try {
-			files =createWorkspaceWithData();
-		} catch (CoreException e1) {
-			fail(e1.getMessage());
-		} catch (IOException e1) {
-			fail(e1.getMessage());
-		}
+		files =createWorkspaceWithData();
 
 
 		//Introduce the allowed formats
@@ -74,15 +68,15 @@ public class SequenceContentProviderTest {
 		}		
 	}
 
-	
+
 //	@Test
 //	public void testViewer() throws CoreException, IOException {
-//
-//
+
+
 //	}
-	
-	
-	
+
+
+
 	@Test
 	public void testGetChildren() throws CoreException, IOException {
 
@@ -93,7 +87,7 @@ public class SequenceContentProviderTest {
 		//================
 		IFile gbkFile=files.get("sequence.gbk");
 		assertNotNull(gbkFile);
-		
+
 		Object[] obj=provider.getChildren(gbkFile);
 		assertNotNull(obj);
 		assertEquals(1, obj.length);
@@ -104,7 +98,7 @@ public class SequenceContentProviderTest {
 		//================
 		gbkFile=files.get("sequence_fail.gbk");
 		assertNotNull(gbkFile);
-		
+
 		obj=provider.getChildren(gbkFile);
 		assertNotNull(obj);
 		assertEquals(0, obj.length);
@@ -113,7 +107,7 @@ public class SequenceContentProviderTest {
 		//================
 		IFile fastaFile=files.get("sequence3.fasta");
 		assertNotNull(fastaFile);
-		
+
 		obj=provider.getChildren(fastaFile);
 		assertNotNull(obj);
 		assertEquals(2, obj.length);
@@ -121,13 +115,13 @@ public class SequenceContentProviderTest {
 		assertTrue(obj[1] instanceof IAASequence);
 
 		int a=0;
-		
+
 //		//Verify children are what we expect
 //		for (Object o : obj){
-//			if (o instanceof ISequence) {
-//				ISequence seq = (ISequence) o;
-//				System.out.println("seq: " + seq.getPlainSequence());
-//			}
+//		if (o instanceof ISequence) {
+//		ISequence seq = (ISequence) o;
+//		System.out.println("seq: " + seq.getPlainSequence());
+//		}
 //		}
 
 	}
@@ -143,10 +137,10 @@ public class SequenceContentProviderTest {
 	private Map<String, IFile> createWorkspaceWithData() throws CoreException, IOException {
 //		//Get WS root
 //		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-//
+
 //		//Create the project
 //		IProject project = root.getProject("UnitTestProject");
-		
+
 		IProgressMonitor dummyMonitor=new IProgressMonitor(){
 
 			public void beginTask(String name, int totalWork) {
@@ -175,10 +169,10 @@ public class SequenceContentProviderTest {
 			}
 
 		};
-		
+
 		if (!(testProject.exists()))
 			testProject.create(dummyMonitor);
-		
+
 		//Open project
 		testProject.open(dummyMonitor);
 		IPath projectPath = testProject.getFullPath();
