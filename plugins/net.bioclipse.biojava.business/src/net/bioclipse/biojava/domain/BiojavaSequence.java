@@ -29,67 +29,67 @@ import org.biojavax.bio.seq.RichSequence;
  */
 public class BiojavaSequence extends BioObject implements ISequence {
 
-	private RichSequence richSequence;
+    private RichSequence richSequence;
 
-	/**
-	 * Create a BiojavaSequence from a RichSequence
-	 * @param richSequence
-	 */
-	public BiojavaSequence(RichSequence richSequence) {
-		super();
-		this.richSequence = richSequence;
-	}
-	
-	public BiojavaSequence() {
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * Create a BiojavaSequence from a RichSequence
+     * @param richSequence
+     */
+    public BiojavaSequence(RichSequence richSequence) {
+        super();
+        this.richSequence = richSequence;
+    }
+    
+    public BiojavaSequence() {
+        // TODO Auto-generated constructor stub
+    }
 
-	@Recorded
-	public String getPlainSequence() throws IOException {
-		String fastaString=toFasta();
-		String plainString=StringUtils.removeUntilFirstNewline(fastaString);
-		return plainString;
-	}
+    @Recorded
+    public String getPlainSequence() throws IOException {
+        String fastaString=toFasta();
+        String plainString=StringUtils.removeUntilFirstNewline(fastaString);
+        return plainString;
+    }
 
-	/**
-	 * Convert RichSequence to FASTA and return as String
-	 * @throws IOException 
-	 */
-	public String toFasta() throws IOException {
+    /**
+     * Convert RichSequence to FASTA and return as String
+     * @throws IOException 
+     */
+    public String toFasta() throws IOException {
 
-		ByteArrayOutputStream os=new ByteArrayOutputStream();
+        ByteArrayOutputStream os=new ByteArrayOutputStream();
 
-		Namespace ns = RichObjectFactory.getDefaultNamespace();   
-		RichSequence.IOTools.writeFasta(os,richSequence,ns);
-		os.close();
+        Namespace ns = RichObjectFactory.getDefaultNamespace();   
+        RichSequence.IOTools.writeFasta(os,richSequence,ns);
+        os.close();
 
-		byte[] byteStream = os.toByteArray();
+        byte[] byteStream = os.toByteArray();
 
-		return new String(byteStream);
-	}
+        return new String(byteStream);
+    }
 
-	/**
-	 * Returns the RichSequence
-	 */
-	public Object getParsedResource() {
-		return richSequence;
-	}
+    /**
+     * Returns the RichSequence
+     */
+    public Object getParsedResource() {
+        return richSequence;
+    }
 
-	public RichSequence getRichSequence() {
-		return richSequence;
-	}
+    public RichSequence getRichSequence() {
+        return richSequence;
+    }
 
-	public void setRichSequence(RichSequence richSequence) {
-		this.richSequence = richSequence;
-	}
+    public void setRichSequence(RichSequence richSequence) {
+        this.richSequence = richSequence;
+    }
 
-	public String getName() {
-		return richSequence != null ? richSequence.getName()
-				                    : "";
-	}
+    public String getName() {
+        return richSequence != null ? richSequence.getName()
+                                    : "";
+    }
 
-	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return super.getAdapter(adapter);
-	}
+    public Object getAdapter(Class adapter) {
+        // TODO Auto-generated method stub
+        return super.getAdapter(adapter);
+    }
 }

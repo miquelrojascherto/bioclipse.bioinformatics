@@ -21,12 +21,12 @@ import net.bioclipse.core.domain.BioList;
  */
 public class BiojavaSequenceList extends BioList<BiojavaSequence> {
 
-	public BiojavaSequenceList() {
-		super();
-	}
-	
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public BiojavaSequenceList() {
+        super();
+    }
+    
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

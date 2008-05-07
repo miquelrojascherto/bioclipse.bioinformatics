@@ -33,87 +33,87 @@ public class FailingLongRunningAction extends ActionDelegate{
         Logger.getLogger(FailingLongRunningAction.class);
     
     
-	/**
-	 * This action is to demonstrate long running operations in Bioclipse.
-	 */
-	@Override
-	public void run(IAction action) {
+    /**
+     * This action is to demonstrate long running operations in Bioclipse.
+     */
+    @Override
+    public void run(IAction action) {
 
-		LongJob job = new LongJob();
-		job.setDelay(0);
-		ImageDescriptor icon = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
-		ActionJobRunner.getInstance().runSingleAction(job, true, false, icon);
+        LongJob job = new LongJob();
+        job.setDelay(0);
+        ImageDescriptor icon = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
+        ActionJobRunner.getInstance().runSingleAction(job, true, false, icon);
 
-	}
+    }
 
-	class LongJob extends AbstractJob{
-
-
-		public String getJobDescription() {
-			return getJobName();
-		}
-
-		public String getJobName() {
-			return "Long-running job that fails";
-		}
+    class LongJob extends AbstractJob{
 
 
-		public int getTotalTime() {
-			return 5;
-		}
+        public String getJobDescription() {
+            return getJobName();
+        }
 
-		public void run(IProgressMonitor monitor) throws InvocationTargetException,
-		InterruptedException {
-			monitor.subTask("Init");
-			sleep(500);
-			monitor.subTask("Processing");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			monitor.worked(1);
-			sleep(500);
-			monitor.worked(1);
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(300);
-			monitor.subTask("Validating");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(300);
-			monitor.worked(1);
-			monitor.subTask("Validating");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(300);
-			monitor.worked(1);
-			monitor.subTask("Failing");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			
-			//FAIL!!
-			setFail(true);
-			String failMessage="The protein could not be translated into anything at all.";
+        public String getJobName() {
+            return "Long-running job that fails";
+        }
 
-			sleep(500);
-			monitor.worked(1);
 
-			if (this.fail) {
-				throw new InvocationTargetException(new IllegalArgumentException(failMessage),"Error executing job");
-			}
+        public int getTotalTime() {
+            return 5;
+        }
 
-		}
+        public void run(IProgressMonitor monitor) throws InvocationTargetException,
+        InterruptedException {
+            monitor.subTask("Init");
+            sleep(500);
+            monitor.subTask("Processing");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            monitor.worked(1);
+            sleep(500);
+            monitor.worked(1);
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(300);
+            monitor.subTask("Validating");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(300);
+            monitor.worked(1);
+            monitor.subTask("Validating");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(300);
+            monitor.worked(1);
+            monitor.subTask("Failing");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            
+            //FAIL!!
+            setFail(true);
+            String failMessage="The protein could not be translated into anything at all.";
 
-		public void sleep(int ms) {
-			try {
-				Thread.sleep(ms * 1);
-			} catch (InterruptedException e) {
-				LogUtils.debugTrace(logger, e);
-			}
-		}
-	}
+            sleep(500);
+            monitor.worked(1);
+
+            if (this.fail) {
+                throw new InvocationTargetException(new IllegalArgumentException(failMessage),"Error executing job");
+            }
+
+        }
+
+        public void sleep(int ms) {
+            try {
+                Thread.sleep(ms * 1);
+            } catch (InterruptedException e) {
+                LogUtils.debugTrace(logger, e);
+            }
+        }
+    }
 
 }

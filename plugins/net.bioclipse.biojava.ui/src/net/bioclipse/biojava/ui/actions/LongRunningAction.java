@@ -34,97 +34,97 @@ public class LongRunningAction extends ActionDelegate {
         Logger.getLogger(LongRunningAction.class);
     
     
-	/**
-	 * This action is to demonstrate long running operations in Bioclipse.
-	 */
-	@Override
-	public void run(IAction action) {
+    /**
+     * This action is to demonstrate long running operations in Bioclipse.
+     */
+    @Override
+    public void run(IAction action) {
 
-		LongJob job = new LongJob();
-		job.setDelay(0);
-		ImageDescriptor icon = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
-		ActionJobRunner.getInstance().runSingleAction(job, true, false, icon);
+        LongJob job = new LongJob();
+        job.setDelay(0);
+        ImageDescriptor icon = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
+        ActionJobRunner.getInstance().runSingleAction(job, true, false, icon);
 
-	}
+    }
 
-	class LongJob extends AbstractJob{
-
-
-		public String getJobDescription() {
-			return getJobName();
-		}
-
-		public String getJobName() {
-			return "Long-running job";
-		}
+    class LongJob extends AbstractJob{
 
 
-		public int getTotalTime() {
-			return 5;
-		}
+        public String getJobDescription() {
+            return getJobName();
+        }
 
-		public void run(IProgressMonitor monitor) throws InvocationTargetException,
-		InterruptedException {
-			monitor.subTask("Init");
-			sleep(2000);
-			monitor.subTask("Processing");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			monitor.worked(1);
-			sleep(1000);
-			monitor.worked(1);
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(500);
-			monitor.subTask("Validating");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(500);
-			monitor.worked(1);
-			monitor.subTask("Validating");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(1000);
-			monitor.worked(1);
-			monitor.subTask("Finishing");
-			if (monitor.isCanceled()) {
-				return;
-			}
-			sleep(500);
-			monitor.worked(1);
+        public String getJobName() {
+            return "Long-running job";
+        }
 
-			if (this.fail) {
-				throw new InvocationTargetException(new IllegalArgumentException("The real cause."),"Error executing job"); //$NON-NLS-1$
-			}
 
-			showResults();
+        public int getTotalTime() {
+            return 5;
+        }
 
-		}
+        public void run(IProgressMonitor monitor) throws InvocationTargetException,
+        InterruptedException {
+            monitor.subTask("Init");
+            sleep(2000);
+            monitor.subTask("Processing");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            monitor.worked(1);
+            sleep(1000);
+            monitor.worked(1);
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(500);
+            monitor.subTask("Validating");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(500);
+            monitor.worked(1);
+            monitor.subTask("Validating");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(1000);
+            monitor.worked(1);
+            monitor.subTask("Finishing");
+            if (monitor.isCanceled()) {
+                return;
+            }
+            sleep(500);
+            monitor.worked(1);
 
-		private void showResults() {
+            if (this.fail) {
+                throw new InvocationTargetException(new IllegalArgumentException("The real cause."),"Error executing job"); //$NON-NLS-1$
+            }
 
-	          PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-	                public void run() {
-	        			MessageDialog.openInformation(
-	        					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-	        					"Result",
-	        					"The reults are: WEEHOW");
-	                }
-	            });
+            showResults();
 
-		}
+        }
 
-		public void sleep(int ms) {
-			try {
-				Thread.sleep(ms * 1);
-			} catch (InterruptedException e) {
-				LogUtils.debugTrace(logger, e);
-			}
-		}
-	}
+        private void showResults() {
+
+              PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        MessageDialog.openInformation(
+                                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                                "Result",
+                                "The reults are: WEEHOW");
+                    }
+                });
+
+        }
+
+        public void sleep(int ms) {
+            try {
+                Thread.sleep(ms * 1);
+            } catch (InterruptedException e) {
+                LogUtils.debugTrace(logger, e);
+            }
+        }
+    }
 
 }

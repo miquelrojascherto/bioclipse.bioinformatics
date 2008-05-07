@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * www.eclipse.org—epl-v10.html <http://www.eclipse.org/legal/epl-v10.html>
- * 
+ *
  * Contributors:
  *     Jonathan Alvarsson
  *     Ola Spjuth
- *     
+ *
  ******************************************************************************/
 package net.bioclipse.biojava.business;
 
@@ -41,296 +41,296 @@ import testData.TestData;
 public class BiojavaManagerTest {
 
     private Logger logger = Logger.getLogger(BiojavaManagerTest.class);
-    
-	private IBiojavaManager biojava;
 
-	@Before
-	public void setup() {
-		biojava = new BiojavaManager();  
+    private IBiojavaManager biojava;
+
+    @Before
+    public void setup() {
+        biojava = new BiojavaManager();
 
 
-		//Introduce the allowed formats
-		try{
-			Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
-			Class.forName("org.biojavax.bio.seq.io.FastaFormat");
-			Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
-			Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
-			Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
-			Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
-			Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
-			Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
-		}
-		catch(ClassNotFoundException e){
-			System.out.println("Class not found" + e);
-		}		
-	}
+        //Introduce the allowed formats
+        try{
+            Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
+            Class.forName("org.biojavax.bio.seq.io.FastaFormat");
+            Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
+            Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
+            Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
+            Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
+            Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
+            Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
+        }
+        catch(ClassNotFoundException e){
+            System.out.println("Class not found" + e);
+        }
+    }
 
-	
-	@Test
-	public void testCreateSequences() {
-		
-		//A DNA Sequence
-		ISequence seq=biojava.createSequence("CCCTCGGCTTC");
-		try {
-			assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
 
-		//A Protein Sequence
-		seq=biojava.createSequence("SEQUENCE");
-		try {
-			assertEquals("SEQUENCE", seq.getPlainSequence().trim().toUpperCase());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+    @Test
+    public void testCreateSequences() {
 
-		/*
-		//An RNA Sequence
-		seq=biojava.createSequence("CCCUCGGCUUC");
-		try {
-			assertEquals("CCCUCGGCUUC", seq.getPlainSequence());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		*/
-	}
+        //A DNA Sequence
+        ISequence seq=biojava.createSequence("CCCTCGGCTTC");
+        try {
+            assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
 
-	@Test
-	public void testCreateNamedSequences() {
-		
-		//A DNA Sequence
-		ISequence seq=biojava.createSequence("sequence1","CCCTCGGCTTC");
-		try {
-			assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
-			
-			//Right now: don't care about name as it is set by BioJava
-			
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+        //A Protein Sequence
+        seq=biojava.createSequence("SEQUENCE");
+        try {
+            assertEquals("SEQUENCE", seq.getPlainSequence().trim().toUpperCase());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
 
-		//A Protein Sequence
-		seq=biojava.createSequence("sequence2","SEQUENCE");
-		try {
-			assertEquals("SEQUENCE", seq.getPlainSequence().trim().toUpperCase());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+        /*
+        //An RNA Sequence
+        seq=biojava.createSequence("CCCUCGGCUUC");
+        try {
+            assertEquals("CCCUCGGCUUC", seq.getPlainSequence());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        */
+    }
 
-		/*
-		//An RNA Sequence
-		seq=biojava.createSequence("CCCUCGGCUUC");
-		try {
-			assertEquals("CCCUCGGCUUC", seq.getPlainSequence());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		*/
-	}
+    @Test
+    public void testCreateNamedSequences() {
 
-	
-	@Test
-	public void testCreateFastaSequences() {
-		
-		//A DNA Sequence
-		ISequence seq=biojava.createSequenceFromFasta(">sequence1\nCCCTCGGCTTC");
-		try {
-			assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
-			
-			//Right now: don't care about name as it is set by BioJava
-			
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+        //A DNA Sequence
+        ISequence seq=biojava.createSequence("sequence1","CCCTCGGCTTC");
+        try {
+            assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
 
-		//A Protein Sequence
-		seq=biojava.createSequenceFromFasta(">sequence2\nSEQUENCE");
-		try {
-			assertEquals("SEQUENCE", seq.getPlainSequence().trim().toUpperCase());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+            //Right now: don't care about name as it is set by BioJava
 
-		/*
-		//An RNA Sequence
-		seq=biojava.createSequence("CCCUCGGCUUC");
-		try {
-			assertEquals("CCCUCGGCUUC", seq.getPlainSequence());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
-		*/
-	}
-	
-	
-	
-	
-	@Test
-	public void testToFasta() {
-		BiojavaSequence seq=null;
-		try {
-			seq = biojava.loadSequence( TestData.getPathToAAFastaSequence() );
-//			seq = biojava.loadSequence( TestData.getPathToFosbFastaSequence() );
-		} catch (IOException e) {
-			LogUtils.debugTrace(logger, e);
-			fail (e.getMessage());
-		} catch (Exception e) {
-			LogUtils.debugTrace(logger, e);
-			fail (e.getMessage());
-		}
-		assertNotNull(seq);
-//		assertEquals( "Sequence", seq.getName()); 
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
 
-		try {
-			assertEquals( "SEQUENCE", seq.getPlainSequence().trim() );
-		} catch (IOException e) {
-			LogUtils.debugTrace(logger, e);
-			fail (e.getMessage());
-		}
-	}
+        //A Protein Sequence
+        seq=biojava.createSequence("sequence2","SEQUENCE");
+        try {
+            assertEquals("SEQUENCE", seq.getPlainSequence().trim().toUpperCase());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
 
-	@Test
-	public void testLoadFastaSequences() {
-		BiojavaSequence seq=null;
-		try {
-			//Test read Protein as fasta
-			seq = biojava.loadSequence( TestData.getPathToAAFastaSequence() );
-			assertNotNull( seq );
-			assertEquals( "SEQUENCE", seq.getPlainSequence().trim().toUpperCase() );
+        /*
+        //An RNA Sequence
+        seq=biojava.createSequence("CCCUCGGCUUC");
+        try {
+            assertEquals("CCCUCGGCUUC", seq.getPlainSequence());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        */
+    }
 
-			//Test read DNA as fasta
-			seq = biojava.loadSequence( TestData.getPathToDNAFastaSequence() );
-			assertNotNull( seq );
-			assertEquals( "GATTACA", seq.getPlainSequence().trim().toUpperCase() );
 
-			/*
-			//Test read RNA as fasta
-			seq = biojava.loadSequence( TestData.getPathToRNAFastaSequence() );
-			assertNotNull( seq );
-			assertEquals( "GAUUACA", seq.getPlainSequence().trim().toUpperCase() );
+    @Test
+    public void testCreateFastaSequences() {
+
+        //A DNA Sequence
+        ISequence seq=biojava.createSequenceFromFasta(">sequence1\nCCCTCGGCTTC");
+        try {
+            assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
+
+            //Right now: don't care about name as it is set by BioJava
+
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        //A Protein Sequence
+        seq=biojava.createSequenceFromFasta(">sequence2\nSEQUENCE");
+        try {
+            assertEquals("SEQUENCE", seq.getPlainSequence().trim().toUpperCase());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        /*
+        //An RNA Sequence
+        seq=biojava.createSequence("CCCUCGGCUUC");
+        try {
+            assertEquals("CCCUCGGCUUC", seq.getPlainSequence());
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        */
+    }
+
+
+
+
+    @Test
+    public void testToFasta() {
+        BiojavaSequence seq=null;
+        try {
+            seq = biojava.loadSequence( TestData.getPathToAAFastaSequence() );
+//            seq = biojava.loadSequence( TestData.getPathToFosbFastaSequence() );
+        } catch (IOException e) {
+            LogUtils.debugTrace(logger, e);
+            fail (e.getMessage());
+        } catch (Exception e) {
+            LogUtils.debugTrace(logger, e);
+            fail (e.getMessage());
+        }
+        assertNotNull(seq);
+//        assertEquals( "Sequence", seq.getName());
+
+        try {
+            assertEquals( "SEQUENCE", seq.getPlainSequence().trim() );
+        } catch (IOException e) {
+            LogUtils.debugTrace(logger, e);
+            fail (e.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoadFastaSequences() {
+        BiojavaSequence seq=null;
+        try {
+            //Test read Protein as fasta
+            seq = biojava.loadSequence( TestData.getPathToAAFastaSequence() );
+            assertNotNull( seq );
+            assertEquals( "SEQUENCE", seq.getPlainSequence().trim().toUpperCase() );
+
+            //Test read DNA as fasta
+            seq = biojava.loadSequence( TestData.getPathToDNAFastaSequence() );
+            assertNotNull( seq );
+            assertEquals( "GATTACA", seq.getPlainSequence().trim().toUpperCase() );
+
+            /*
+            //Test read RNA as fasta
+            seq = biojava.loadSequence( TestData.getPathToRNAFastaSequence() );
+            assertNotNull( seq );
+            assertEquals( "GAUUACA", seq.getPlainSequence().trim().toUpperCase() );
 */
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (Exception e) {
-			LogUtils.debugTrace(logger, e);
-			fail (e.getMessage());
-		}
+        } catch (IOException e) {
+            fail(e.getMessage());
+        } catch (Exception e) {
+            LogUtils.debugTrace(logger, e);
+            fail (e.getMessage());
+        }
 
-	}
+    }
 
-	@Test
-	public void testDNAtoRNA() {
-		BiojavaSequence seq=null;
-		try {
-			seq = biojava.loadSequence( TestData.getPathToDNAFastaSequence() );
-		} catch (IOException e1) {
-			LogUtils.debugTrace(logger, e1);
-			fail(e1.getMessage());
-		} catch (Exception e) {
-			LogUtils.debugTrace(logger, e);
-			fail (e.getMessage());
-		}
+    @Test
+    public void testDNAtoRNA() {
+        BiojavaSequence seq=null;
+        try {
+            seq = biojava.loadSequence( TestData.getPathToDNAFastaSequence() );
+        } catch (IOException e1) {
+            LogUtils.debugTrace(logger, e1);
+            fail(e1.getMessage());
+        } catch (Exception e) {
+            LogUtils.debugTrace(logger, e);
+            fail (e.getMessage());
+        }
 
-		assertNotNull(seq);
+        assertNotNull(seq);
 
-		assertTrue(seq instanceof BiojavaDNASequence);
-		BiojavaDNASequence dnaSeq = (BiojavaDNASequence) seq;
+        assertTrue(seq instanceof BiojavaDNASequence);
+        BiojavaDNASequence dnaSeq = (BiojavaDNASequence) seq;
 
-		try {
-			assertEquals( "GATTACA", seq.getPlainSequence().trim().toUpperCase() );
-			BiojavaRNASequence rnaSeq;
-			rnaSeq = biojava.DNAtoRNA(dnaSeq);
-			assertEquals( "GAUUACA", rnaSeq.getPlainSequence().trim().toUpperCase() );
-		} catch (IOException e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		} catch (Exception e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		}
-	}
+        try {
+            assertEquals( "GATTACA", seq.getPlainSequence().trim().toUpperCase() );
+            BiojavaRNASequence rnaSeq;
+            rnaSeq = biojava.DNAtoRNA(dnaSeq);
+            assertEquals( "GAUUACA", rnaSeq.getPlainSequence().trim().toUpperCase() );
+        } catch (IOException e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        } catch (Exception e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        }
+    }
 
-	@Test
-	public void testDNAtoProtein() {
-		BiojavaSequence seq=null;
-			seq = biojava.createSequence("CTCCTCGCGAAACGATACGAT");
+    @Test
+    public void testDNAtoProtein() {
+        BiojavaSequence seq=null;
+            seq = biojava.createSequence("CTCCTCGCGAAACGATACGAT");
 
-		assertNotNull(seq);
+        assertNotNull(seq);
 
-		assertTrue(seq instanceof BiojavaDNASequence);
-		BiojavaDNASequence dnaSeq = (BiojavaDNASequence) seq;
+        assertTrue(seq instanceof BiojavaDNASequence);
+        BiojavaDNASequence dnaSeq = (BiojavaDNASequence) seq;
 
-		try {
+        try {
 
-			BiojavaAASequence rnaSeq = biojava.DNAToProtein(dnaSeq);
-			assertEquals( "LLAKRYD", rnaSeq.getPlainSequence().trim().toUpperCase() );
-			
-		} catch (IOException e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		} catch (Exception e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		}
-	}
+            BiojavaAASequence rnaSeq = biojava.DNAToProtein(dnaSeq);
+            assertEquals( "LLAKRYD", rnaSeq.getPlainSequence().trim().toUpperCase() );
 
-	@Test
-	public void testRNAtoProtein() {
-		fail("Not implemented");
-	}
+        } catch (IOException e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        } catch (Exception e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        }
+    }
 
-	@Test
-	public void testRNAtoDNA() {
-		fail("Not implemented");
-	}
-	
+    @Test
+    public void testRNAtoProtein() {
+        fail("Not implemented");
+    }
 
-	/*
-	@Test
-	public void testRNAtoDNA() {
+    @Test
+    public void testRNAtoDNA() {
+        fail("Not implemented");
+    }
 
-		BiojavaSequence seq = biojava.createSequence("GAUUACA");
 
-		assertNotNull(seq);
+    /*
+    @Test
+    public void testRNAtoDNA() {
 
-		assertTrue(seq instanceof BiojavaRNASequence);
-		BiojavaRNASequence rnaSeq = (BiojavaRNASequence) seq;
+        BiojavaSequence seq = biojava.createSequence("GAUUACA");
 
-		try {
-			//Check correctly read
-			assertEquals( "GAUUACA", rnaSeq.getPlainSequence().trim().toUpperCase() );
+        assertNotNull(seq);
 
-			BiojavaDNASequence dnaSeq = biojava.RNAtoDNA(rnaSeq);
+        assertTrue(seq instanceof BiojavaRNASequence);
+        BiojavaRNASequence rnaSeq = (BiojavaRNASequence) seq;
 
-			//Check correctly converted
-			assertEquals( "GATTACA", dnaSeq.getPlainSequence().trim().toUpperCase() );
-		} catch (IOException e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		} catch (Exception e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		}
-	}	
+        try {
+            //Check correctly read
+            assertEquals( "GAUUACA", rnaSeq.getPlainSequence().trim().toUpperCase() );
+
+            BiojavaDNASequence dnaSeq = biojava.RNAtoDNA(rnaSeq);
+
+            //Check correctly converted
+            assertEquals( "GATTACA", dnaSeq.getPlainSequence().trim().toUpperCase() );
+        } catch (IOException e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        } catch (Exception e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        }
+    }
 */
-	@Test
-	public void testLoadFastaSequenceCollection() throws BioclipseException, IOException {
-		BiojavaSequenceList sequenceCollection=null;
-		sequenceCollection = biojava.loadSequences( TestData.getPathToMultipleSequences() );
-		assertNotNull( sequenceCollection );
-		assertEquals( 2, sequenceCollection.size() );
+    @Test
+    public void testLoadFastaSequenceCollection() throws BioclipseException, IOException {
+        BiojavaSequenceList sequenceCollection=null;
+        sequenceCollection = biojava.loadSequences( TestData.getPathToMultipleSequences() );
+        assertNotNull( sequenceCollection );
+        assertEquals( 2, sequenceCollection.size() );
 
-		//Check individual sequences
-		BiojavaSequence seq1=sequenceCollection.get(0);
-		BiojavaSequence seq2=sequenceCollection.get(1);
+        //Check individual sequences
+        BiojavaSequence seq1=sequenceCollection.get(0);
+        BiojavaSequence seq2=sequenceCollection.get(1);
 
-		try {
-			assertEquals(341, seq1.getPlainSequence().length());
-			assertEquals(342, seq2.getPlainSequence().length());
-		} catch (IOException e) {
-			LogUtils.debugTrace(logger, e);
-			fail(e.getMessage());
-		}
-	}
+        try {
+            assertEquals(341, seq1.getPlainSequence().length());
+            assertEquals(342, seq2.getPlainSequence().length());
+        } catch (IOException e) {
+            LogUtils.debugTrace(logger, e);
+            fail(e.getMessage());
+        }
+    }
 }

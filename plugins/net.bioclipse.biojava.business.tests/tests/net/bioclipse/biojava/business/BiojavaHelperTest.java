@@ -17,50 +17,50 @@ import org.junit.Test;
  *
  */
 public class BiojavaHelperTest {
-	private IBiojavaManager biojava;
+    private IBiojavaManager biojava;
 
-	@Before
-	public void setup() {
-		biojava = new BiojavaManager();  
+    @Before
+    public void setup() {
+        biojava = new BiojavaManager();
 
-		//Introduce the allowed formats
-		try{
-			Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
-			Class.forName("org.biojavax.bio.seq.io.FastaFormat");
-			Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
-			Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
-			Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
-			Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
-			Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
-			Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
-		}
-		catch(ClassNotFoundException e){
-			System.out.println("Class not found" + e);
-		}		
-	}
+        //Introduce the allowed formats
+        try{
+            Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
+            Class.forName("org.biojavax.bio.seq.io.FastaFormat");
+            Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
+            Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
+            Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
+            Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
+            Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
+            Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
+        }
+        catch(ClassNotFoundException e){
+            System.out.println("Class not found" + e);
+        }
+    }
 
-	@Test
-	/**
-	 * Test conversion of SymbolList RNA to DNA
-	 */
-	public void testRNAtoDNA() {
+    @Test
+    /**
+     * Test conversion of SymbolList RNA to DNA
+     */
+    public void testRNAtoDNA() {
 
-		try {
-			SymbolList rna = RNATools.createRNA("uuaaggccauugaaaaaacc");
-			SymbolList revRna=BiojavaHelper.reverseTranscribe(rna);
+        try {
+            SymbolList rna = RNATools.createRNA("uuaaggccauugaaaaaacc");
+            SymbolList revRna=BiojavaHelper.reverseTranscribe(rna);
 
-			//This is the answer we are looking for
-			SymbolList dna = DNATools.createDNA("ccaaaaaagttaccggaatt");
+            //This is the answer we are looking for
+            SymbolList dna = DNATools.createDNA("ccaaaaaagttaccggaatt");
 
-			assertEquals(dna.seqString(), revRna.seqString());
+            assertEquals(dna.seqString(), revRna.seqString());
 
-		} catch (IllegalSymbolException e) {
-			fail(e.getMessage());
-		} catch (IllegalAlphabetException e) {
-			fail(e.getMessage());
-		}
+        } catch (IllegalSymbolException e) {
+            fail(e.getMessage());
+        } catch (IllegalAlphabetException e) {
+            fail(e.getMessage());
+        }
 
-	}
+    }
 
 
 }

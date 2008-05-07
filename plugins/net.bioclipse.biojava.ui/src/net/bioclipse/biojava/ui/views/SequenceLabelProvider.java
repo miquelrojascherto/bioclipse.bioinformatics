@@ -31,55 +31,55 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
  */
 public class SequenceLabelProvider implements ILabelProvider, IDescriptionProvider {
 
-	private Image sequenceImage;
+    private Image sequenceImage;
 
-	public Image getImage(Object element) {
-		if (element instanceof BiojavaSequenceList) {
-			if (sequenceImage==null){
-				ImageDescriptor descriptor=Activator.getImageDescriptor("icons/sequence4.gif");
-				sequenceImage= descriptor.createImage();
-			}
-			return sequenceImage;
-		}
-		else if (element instanceof ISequence) {
-			if (sequenceImage==null){
-				ImageDescriptor descriptor=Activator.getImageDescriptor("icons/sequence4.gif");
-				sequenceImage= descriptor.createImage();
-			}
-			return sequenceImage;
-		}
-		String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-		return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
-	}
+    public Image getImage(Object element) {
+        if (element instanceof BiojavaSequenceList) {
+            if (sequenceImage==null){
+                ImageDescriptor descriptor=Activator.getImageDescriptor("icons/sequence4.gif");
+                sequenceImage= descriptor.createImage();
+            }
+            return sequenceImage;
+        }
+        else if (element instanceof ISequence) {
+            if (sequenceImage==null){
+                ImageDescriptor descriptor=Activator.getImageDescriptor("icons/sequence4.gif");
+                sequenceImage= descriptor.createImage();
+            }
+            return sequenceImage;
+        }
+        String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
+        return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+    }
 
-	public String getText(Object element) {
-		if (element instanceof ISequence) {
-			ISequence seq = (ISequence) element;
-			return seq.getName();
-		}
-		else if (element instanceof BiojavaSequenceList) {
-			BiojavaSequenceList col = (BiojavaSequenceList) element;
-			return col.getName();
-		}
-		return null;
-	}
+    public String getText(Object element) {
+        if (element instanceof ISequence) {
+            ISequence seq = (ISequence) element;
+            return seq.getName();
+        }
+        else if (element instanceof BiojavaSequenceList) {
+            BiojavaSequenceList col = (BiojavaSequenceList) element;
+            return col.getName();
+        }
+        return null;
+    }
 
-	public void addListener(ILabelProviderListener listener) {
-	}
+    public void addListener(ILabelProviderListener listener) {
+    }
 
-	public void dispose() {
-		if (sequenceImage!=null) sequenceImage.dispose();
-	}
+    public void dispose() {
+        if (sequenceImage!=null) sequenceImage.dispose();
+    }
 
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
+    public boolean isLabelProperty(Object element, String property) {
+        return false;
+    }
 
-	public void removeListener(ILabelProviderListener listener) {
-	}
+    public void removeListener(ILabelProviderListener listener) {
+    }
 
-	public String getDescription(Object anElement) {
-		return null;
-	}
+    public String getDescription(Object anElement) {
+        return null;
+    }
 
 }

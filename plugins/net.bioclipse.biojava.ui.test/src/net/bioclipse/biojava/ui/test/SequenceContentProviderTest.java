@@ -35,207 +35,207 @@ import static org.junit.Assert.*;
 
 public class SequenceContentProviderTest {
 
-	IWorkspaceRoot wsRoot;
-	IProject testProject;
-	Map<String, IFile> files;
+    IWorkspaceRoot wsRoot;
+    IProject testProject;
+    Map<String, IFile> files;
 
-	@Before
-	public void setup() throws CoreException, IOException {
+    @Before
+    public void setup() throws CoreException, IOException {
 
-		//Get WS root
-		wsRoot = ResourcesPlugin.getWorkspace().getRoot();
+        //Get WS root
+        wsRoot = ResourcesPlugin.getWorkspace().getRoot();
 
-		//Create the project
-		testProject = wsRoot.getProject("UnitTestProject");
+        //Create the project
+        testProject = wsRoot.getProject("UnitTestProject");
 
-		//Create WS with data
-		files =createWorkspaceWithData();
-
-
-		//Introduce the allowed formats
-		try{
-			Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
-			Class.forName("org.biojavax.bio.seq.io.FastaFormat");
-			Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
-			Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
-			Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
-			Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
-			Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
-			Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
-		}
-		catch(ClassNotFoundException e){
-			System.out.println("Class not found" + e);
-		}		
-	}
+        //Create WS with data
+        files =createWorkspaceWithData();
 
 
-//	@Test
-//	public void testViewer() throws CoreException, IOException {
+        //Introduce the allowed formats
+        try{
+            Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
+            Class.forName("org.biojavax.bio.seq.io.FastaFormat");
+            Class.forName("org.biojavax.bio.seq.io.GenbankFormat");
+            Class.forName("org.biojavax.bio.seq.io.INSDseqFormat");
+            Class.forName("org.biojavax.bio.seq.io.EMBLxmlFormat");
+            Class.forName("org.biojavax.bio.seq.io.UniProtFormat");
+            Class.forName("org.biojavax.bio.seq.io.UniProtXMLFormat");
+            Class.forName("org.biojavax.bio.seq.io.RichSequenceFormat");
+        }
+        catch(ClassNotFoundException e){
+            System.out.println("Class not found" + e);
+        }
+    }
 
 
-//	}
+//    @Test
+//    public void testViewer() throws CoreException, IOException {
 
 
-
-	@Test
-	public void testGetChildren() throws CoreException, IOException {
-
-		//Create ContentProvider to test
-		SequenceContentProvider provider=new SequenceContentProvider();
-
-		//New file to test
-		//================
-		IFile gbkFile=files.get("sequence.gbk");
-		assertNotNull(gbkFile);
-
-		Object[] obj=provider.getChildren(gbkFile);
-		assertNotNull(obj);
-		assertEquals(1, obj.length);
-		assertTrue(obj[0] instanceof IDNASequence);
-//		IDNASequence seq=(IDNASequence)obj[0];
-
-		//New file to test
-		//================
-		gbkFile=files.get("sequence_fail.gbk");
-		assertNotNull(gbkFile);
-
-		obj=provider.getChildren(gbkFile);
-		assertNotNull(obj);
-		assertEquals(0, obj.length);
-
-		//New file to test, contains 2 sequences
-		//================
-		IFile fastaFile=files.get("sequence3.fasta");
-		assertNotNull(fastaFile);
-
-		obj=provider.getChildren(fastaFile);
-		assertNotNull(obj);
-		assertEquals(2, obj.length);
-		assertTrue(obj[0] instanceof IAASequence);
-		assertTrue(obj[1] instanceof IAASequence);
-
-		int a=0;
-
-//		//Verify children are what we expect
-//		for (Object o : obj){
-//		if (o instanceof ISequence) {
-//		ISequence seq = (ISequence) o;
-//		System.out.println("seq: " + seq.getPlainSequence());
-//		}
-//		}
-
-	}
+//    }
 
 
 
-	/**
-	 * Supporting method, not a Test
-	 * @return
-	 * @throws CoreException
-	 * @throws IOException
-	 */
-	private Map<String, IFile> createWorkspaceWithData() throws CoreException, IOException {
-//		//Get WS root
-//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    @Test
+    public void testGetChildren() throws CoreException, IOException {
 
-//		//Create the project
-//		IProject project = root.getProject("UnitTestProject");
+        //Create ContentProvider to test
+        SequenceContentProvider provider=new SequenceContentProvider();
 
-		IProgressMonitor dummyMonitor=new IProgressMonitor(){
+        //New file to test
+        //================
+        IFile gbkFile=files.get("sequence.gbk");
+        assertNotNull(gbkFile);
 
-			public void beginTask(String name, int totalWork) {
-			}
+        Object[] obj=provider.getChildren(gbkFile);
+        assertNotNull(obj);
+        assertEquals(1, obj.length);
+        assertTrue(obj[0] instanceof IDNASequence);
+//        IDNASequence seq=(IDNASequence)obj[0];
 
-			public void done() {
-			}
+        //New file to test
+        //================
+        gbkFile=files.get("sequence_fail.gbk");
+        assertNotNull(gbkFile);
 
-			public void internalWorked(double work) {
-			}
+        obj=provider.getChildren(gbkFile);
+        assertNotNull(obj);
+        assertEquals(0, obj.length);
 
-			public boolean isCanceled() {
-				return false;
-			}
+        //New file to test, contains 2 sequences
+        //================
+        IFile fastaFile=files.get("sequence3.fasta");
+        assertNotNull(fastaFile);
 
-			public void setCanceled(boolean value) {
-			}
+        obj=provider.getChildren(fastaFile);
+        assertNotNull(obj);
+        assertEquals(2, obj.length);
+        assertTrue(obj[0] instanceof IAASequence);
+        assertTrue(obj[1] instanceof IAASequence);
 
-			public void setTaskName(String name) {
-			}
+        int a=0;
 
-			public void subTask(String name) {
-			}
+//        //Verify children are what we expect
+//        for (Object o : obj){
+//        if (o instanceof ISequence) {
+//        ISequence seq = (ISequence) o;
+//        System.out.println("seq: " + seq.getPlainSequence());
+//        }
+//        }
 
-			public void worked(int work) {
-			}
+    }
 
-		};
 
-		if (!(testProject.exists()))
-			testProject.create(dummyMonitor);
 
-		//Open project
-		testProject.open(dummyMonitor);
-		IPath projectPath = testProject.getFullPath();
+    /**
+     * Supporting method, not a Test
+     * @return
+     * @throws CoreException
+     * @throws IOException
+     */
+    private Map<String, IFile> createWorkspaceWithData() throws CoreException, IOException {
+//        //Get WS root
+//        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-		//Set up return map
-		Map<String, IFile> files=new HashMap<String, IFile>();
+//        //Create the project
+//        IProject project = root.getProject("UnitTestProject");
 
-		//Create files
-		IPath gbkPath= projectPath.append("sequence.gbk");
-		IFile gbkFile = wsRoot.getFile(gbkPath);
-		InputStream gbkIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence.gbk");
-		gbkFile.create(gbkIS,true,dummyMonitor);
-		gbkIS.close();		
-		files.put("sequence.gbk", gbkFile);
+        IProgressMonitor dummyMonitor=new IProgressMonitor(){
 
-		IPath gbkFailPath= projectPath.append("sequence_fail.gbk");
-		IFile gbkFailFile = wsRoot.getFile(gbkFailPath);
-		InputStream gbkFailIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence_fail.gbk");
-		gbkFailFile.create(gbkFailIS,true,dummyMonitor);
-		gbkFailIS.close();		
-		files.put("sequence_fail.gbk", gbkFailFile);
+            public void beginTask(String name, int totalWork) {
+            }
 
-		IPath fastaPath= projectPath.append("sequence3.fasta");
-		IFile fastaFile = wsRoot.getFile(fastaPath);
-		InputStream fastaIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence3.fasta");
-		fastaFile.create(fastaIS,true,dummyMonitor);
-		fastaIS.close();		
-		files.put("sequence3.fasta", fastaFile);
+            public void done() {
+            }
 
-		//TODO: add more files
-		return files;
-	}
+            public void internalWorked(double work) {
+            }
 
-	public static IFile findFileResourceByLocation (String FileLocation)
-	{
-		IPath ResourcePath = new Path(FileLocation);
-		if (!ResourcePath.isAbsolute())
-		{
-			//this methods does not support relative paths
-			return null;
-		}
-		else
-		{
-			IFile[] Files =
-				getWorkspaceRoot().findFilesForLocation(ResourcePath);
-			return (Files.length > 0) ? Files[0] : null;
-		}
-	}
+            public boolean isCanceled() {
+                return false;
+            }
 
-	private static IWorkspaceRoot getWorkspaceRoot() {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		return root;
-	}
+            public void setCanceled(boolean value) {
+            }
 
-	public static IFile[] findFileResourcesByLocation (String FileLocation)
-	{
-		IPath ResourcePath = new Path(FileLocation);
-		if (!ResourcePath.isAbsolute())
-			//this methods does not support relative paths
-			return new IFile[0];
-		else
-			return getWorkspaceRoot().findFilesForLocation(ResourcePath);
-	}
+            public void setTaskName(String name) {
+            }
+
+            public void subTask(String name) {
+            }
+
+            public void worked(int work) {
+            }
+
+        };
+
+        if (!(testProject.exists()))
+            testProject.create(dummyMonitor);
+
+        //Open project
+        testProject.open(dummyMonitor);
+        IPath projectPath = testProject.getFullPath();
+
+        //Set up return map
+        Map<String, IFile> files=new HashMap<String, IFile>();
+
+        //Create files
+        IPath gbkPath= projectPath.append("sequence.gbk");
+        IFile gbkFile = wsRoot.getFile(gbkPath);
+        InputStream gbkIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence.gbk");
+        gbkFile.create(gbkIS,true,dummyMonitor);
+        gbkIS.close();
+        files.put("sequence.gbk", gbkFile);
+
+        IPath gbkFailPath= projectPath.append("sequence_fail.gbk");
+        IFile gbkFailFile = wsRoot.getFile(gbkFailPath);
+        InputStream gbkFailIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence_fail.gbk");
+        gbkFailFile.create(gbkFailIS,true,dummyMonitor);
+        gbkFailIS.close();
+        files.put("sequence_fail.gbk", gbkFailFile);
+
+        IPath fastaPath= projectPath.append("sequence3.fasta");
+        IFile fastaFile = wsRoot.getFile(fastaPath);
+        InputStream fastaIS = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/sequence3.fasta");
+        fastaFile.create(fastaIS,true,dummyMonitor);
+        fastaIS.close();
+        files.put("sequence3.fasta", fastaFile);
+
+        //TODO: add more files
+        return files;
+    }
+
+    public static IFile findFileResourceByLocation (String FileLocation)
+    {
+        IPath ResourcePath = new Path(FileLocation);
+        if (!ResourcePath.isAbsolute())
+        {
+            //this methods does not support relative paths
+            return null;
+        }
+        else
+        {
+            IFile[] Files =
+                getWorkspaceRoot().findFilesForLocation(ResourcePath);
+            return (Files.length > 0) ? Files[0] : null;
+        }
+    }
+
+    private static IWorkspaceRoot getWorkspaceRoot() {
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        return root;
+    }
+
+    public static IFile[] findFileResourcesByLocation (String FileLocation)
+    {
+        IPath ResourcePath = new Path(FileLocation);
+        if (!ResourcePath.isAbsolute())
+            //this methods does not support relative paths
+            return new IFile[0];
+        else
+            return getWorkspaceRoot().findFilesForLocation(ResourcePath);
+    }
 
 
 

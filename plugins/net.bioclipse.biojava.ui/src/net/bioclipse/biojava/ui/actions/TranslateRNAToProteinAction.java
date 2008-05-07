@@ -27,9 +27,9 @@ public class TranslateRNAToProteinAction extends TranslateAction{
 
     private static final Logger logger = Logger.getLogger(TranslateRNAToProteinAction.class);
     
-	@Override
-	public ISequence convert(ISequence sequence) throws IOException {
-		logger.warn("TranslateRNAToProteinAction not implemented: TODO");
-		return null;
-	}
+    @Override
+    public ISequence convert(ISequence sequence) throws IOException {
+        logger.warn("TranslateRNAToProteinAction not implemented: TODO");
+        return null;
+    }
 }
