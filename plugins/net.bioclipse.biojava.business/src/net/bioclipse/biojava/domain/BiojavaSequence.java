@@ -90,6 +90,6 @@ public class BiojavaSequence extends BioObject implements ISequence {
 
 	public Object getAdapter(Class adapter) {
 		// TODO Auto-generated method stub
-		return null;
+		return super.getAdapter(adapter);
 	}
 }
