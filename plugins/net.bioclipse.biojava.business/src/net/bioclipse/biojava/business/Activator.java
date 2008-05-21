@@ -32,7 +32,6 @@ public class Activator extends Plugin {
     
     private static final Logger logger = Logger.getLogger(Activator.class);
     
-//    private ApplicationContext applicationContext;
     private ServiceTracker finderTracker;
     /**
      * The constructor
