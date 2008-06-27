@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
-Bundle-SymbolicName: net.bioclipse.biojava.business.tests
+Bundle-SymbolicName: net.bioclipse.biojava.business.tests;singleton:=true
 Bundle-Version: 0.1.0
 Require-Bundle: org.eclipse.core.runtime,
  org.junit4,
