@@ -21,4 +21,5 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: true
 Bundle-ClassPath: .
 Import-Package: org.apache.log4j
+Export-Package: net.bioclipse.biojava.ui.test
 
