@@ -86,7 +86,7 @@ public class BiojavaManager implements IBiojavaManager {
             return seq.toFasta();
         }
 
-        // TODO Auto-generated method stub
+        // TODO Add more formats here
 
         logger.warn("BioJavaManager.convertTo() with format: "
                 + format.toString() + " is not implemented.");
@@ -96,11 +96,13 @@ public class BiojavaManager implements IBiojavaManager {
 
 
     /**
-     * Create sequence from a plain sequence string. Will set name to empty.
+     * Create sequence from a plain sequence string. Will set name to a unique
+     * identifier.
+     * 
      * @throws ScriptingException
      */
     public BiojavaSequence createSequence(String content) {
-        return createSequence("No Name", content);
+        return createSequence("seq" + System.currentTimeMillis(), content);
     }
 
 
@@ -122,7 +124,7 @@ public class BiojavaManager implements IBiojavaManager {
     public BiojavaSequence createSequence(String name, String content) {
 
         //Construct a fasta string as
-        String fastaString=">"+name+"\n"+content;
+        String fastaString = ">" + name + "\n" + content;
 
         ByteArrayInputStream stream =
             new ByteArrayInputStream(fastaString.getBytes());
@@ -132,35 +134,42 @@ public class BiojavaManager implements IBiojavaManager {
 
     /**
      * Load sequence from file
-     * @throws IOException
+     * 
+     * @throws IOException if the file could not be read
      * @throws ScriptingException
      */
     public BiojavaSequence loadSequence(String path) {
         File file=new File(path);
-        if (file.canRead()==false){
-            throw new IllegalArgumentException("Could not read file: " + file.getPath());
+        if (!file.canRead()) {
+            throw new IllegalArgumentException("Could not read file: "
+                                               + file.getPath());
         }
         FileInputStream stream;
         try {
             stream = new FileInputStream(file);
             return loadSequence(stream);
         } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Could not read file: " + file.getPath());
+            throw new IllegalArgumentException("Could not read file: "
+                                               + file.getPath());
         }
     }
 
 
     /**
      * Load sequenceCollection from file
-     * @throws IOException
+     * 
+     * @throws IllegalArgumentException
      * @throws BioclipseException
      */
-    public BiojavaSequenceList loadSequences(String path) throws IOException, BioclipseException {
-        File file=new File(path);
-        if (file.canRead()==false) {
-            throw new IOException();
-        }
-        FileInputStream stream=new FileInputStream(file);
+    public BiojavaSequenceList loadSequences(String path)
+        throws IOException, BioclipseException {
+        
+        File file = new File(path);
+        if (!file.canRead())
+            throw new IllegalArgumentException("Could not read file: "
+                                               + file.getPath());
+
+        FileInputStream stream = new FileInputStream(file);
         return loadSequences(stream);
     }
 
@@ -169,9 +178,10 @@ public class BiojavaManager implements IBiojavaManager {
      * Load sequenceCollection from InputStream
      * @throws BioclipseException
      */
-    public BiojavaSequenceList loadSequences(InputStream instream) throws BioclipseException {
+    public BiojavaSequenceList loadSequences(InputStream instream)
+        throws BioclipseException {
 
-        //Buffer the inputstream
+        //Buffer the input stream
         BufferedInputStream bufferedStream=new BufferedInputStream(instream);
 
         Namespace ns = RichObjectFactory.getDefaultNamespace();
