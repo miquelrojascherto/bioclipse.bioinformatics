@@ -70,14 +70,14 @@ public class Aligner extends EditorPart {
     
     static private final Color[] consensusColors
         = new Color[] { colorManager.getColor( new RGB(0xFF, 0xFF, 0xDD) ), // 1
-                        colorManager.getColor( new RGB(0xEE, 0xEE, 0xCC) ), // 2
-                        colorManager.getColor( new RGB(0xDD, 0xDD, 0xBB) ), // 3
-                        colorManager.getColor( new RGB(0xCC, 0xCC, 0xAA) ), // 4
-                        colorManager.getColor( new RGB(0xBB, 0xBB, 0x99) ), // 5
+                        colorManager.getColor( new RGB(0xEE, 0xEE, 0xBE) ), // 2
+                        colorManager.getColor( new RGB(0xDD, 0xDD, 0xB0) ), // 3
+                        colorManager.getColor( new RGB(0xCC, 0xCC, 0xA3) ), // 4
+                        colorManager.getColor( new RGB(0xBB, 0xBB, 0x95) ), // 5
                         colorManager.getColor( new RGB(0xAA, 0xAA, 0x88) ), // 6
-                        colorManager.getColor( new RGB(0x99, 0x99, 0x77) ), // 7
-                        colorManager.getColor( new RGB(0x88, 0x88, 0x66) ), // 8
-                        colorManager.getColor( new RGB(0x77, 0x77, 0x55) )  // 9
+                        colorManager.getColor( new RGB(0x99, 0x99, 0x7A) ), // 7
+                        colorManager.getColor( new RGB(0x88, 0x88, 0x6C) ), // 8
+                        colorManager.getColor( new RGB(0x77, 0x77, 0x5F) )  // 9
                       };
 
     private Map<String, String> sequences; // sequence_name => sequence
