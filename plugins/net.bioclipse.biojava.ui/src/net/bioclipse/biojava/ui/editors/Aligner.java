@@ -10,8 +10,7 @@
 package net.bioclipse.biojava.ui.editors;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +24,8 @@ import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojavax.bio.seq.RichSequence.IOTools;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -49,8 +50,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.FileEditorInput;
-
 
 public class Aligner extends EditorPart {
 
@@ -87,7 +86,8 @@ public class Aligner extends EditorPart {
                 0x77775F
         } );
     
-    private Map<String, String> sequences; // sequence_name => sequence
+    //          seqname, sequence
+    private Map<String,  String> sequences;
     
     private int canvasWidthInSquares, canvasHeightInSquares;
 
@@ -122,51 +122,52 @@ public class Aligner extends EditorPart {
         super.setInput(input);
         
         sequences = new LinkedHashMap<String, String>();
-        
-        // For now, we don't handle things that aren't files. Likely to change.
-        if (input instanceof FileEditorInput) {
-            FileEditorInput fei = (FileEditorInput)input;
-            if (!fei.exists())
-                return;
+
+        // Turn the editor input into an IFile.
+        IFile file = (IFile) input.getAdapter( IFile.class );
+        if (file == null)
+            return;
+
+        SequenceIterator iter;
+        try {
+            // Create a BufferedInputStream for our IFile.
+            BufferedReader br
+                = new BufferedReader(new InputStreamReader(file.getContents()));
             
-            try {
-                // Get a BufferedReader from the FileEditorInput.
-                BufferedReader br = new BufferedReader(
-                    new FileReader(fei.getPath().toFile())
-                );
+            // Create an iterator from the BufferedInputStream.
+            // We have to generalize this from just proteins to anything.
+            // The 'null' indicates that we don't care about which
+            // namespace the sequence ends up getting.
+            iter = IOTools.readFastaProtein( br, null );
+        } catch ( CoreException ce ) {
+            // File not found. TODO: This should be logged.
+            ce.printStackTrace();
+            return;
+        }
 
-                // Get an iterator from the BufferedReader.
-                // The 'null' indicates that we don't care about which
-                // namespace the sequence ends up getting.
-                SequenceIterator iter = IOTools.readFastaProtein( br, null );
+        try {
+            // Add the sequences one by one to the Map. Do minor cosmetics
+            // on the name by removing everything up to and including to
+            // the last '|', if any.
+            while ( iter.hasNext() ) {
+                Sequence s = iter.nextSequence();
+                String name = s.getName().replaceFirst( ".*\\|", "" );
+                sequences.put( name, s.seqString() );
+            }
+        }
+        catch ( BioException e ) {
+            // There was a parsing error. TODO: This should be logged.
+            e.printStackTrace();
+        }
 
-                // Add the sequences one by one to the Map. Do minor cosmetics
-                // on the name by removing everything up to and including to
-                // the last '|', if any.
-                while ( iter.hasNext() ) {
-                    Sequence s = iter.nextSequence();
-                    String name = s.getName().replaceFirst( ".*\\|", "" );
-                    sequences.put( name, s.seqString() );
-                }
-            }
-            catch (FileNotFoundException ex) {
-                // The file could not be found. TODO: This should be logged.
-                ex.printStackTrace();
-            }
-            catch ( BioException e ) {
-                // There was a parsing error. TODO: This should be logged.
-                e.printStackTrace();
-            }
-
-            // We only show a consensus sequence if there is more than one
-            // sequence already.
-            consensusRow  = sequences.size();
-            if (consensusRow > 1) {
-                sequences.put(
-                    "Consensus",
-                    consensusSequence( sequences.values() )
-                );
-            }
+        // We only show a consensus sequence if there is more than one
+        // sequence already.
+        consensusRow  = sequences.size();
+        if (consensusRow > 1) {
+            sequences.put(
+                "Consensus",
+                consensusSequence( sequences.values() )
+            );
         }
         
         canvasHeightInSquares = sequences.size();
