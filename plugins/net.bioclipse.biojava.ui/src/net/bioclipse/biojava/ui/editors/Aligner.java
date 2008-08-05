@@ -12,9 +12,11 @@ package net.bioclipse.biojava.ui.editors;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.bioclipse.ui.editors.ColorManager;
@@ -73,17 +75,18 @@ public class Aligner extends EditorPart {
         selectionColor2 = display.getSystemColor( SWT.COLOR_WHITE );
     
     static private final Color[] consensusColors
-        = new Color[] { colorManager.getColor( new RGB(0xFF, 0xFF, 0xDD) ), // 1
-                        colorManager.getColor( new RGB(0xEE, 0xEE, 0xBE) ), // 2
-                        colorManager.getColor( new RGB(0xDD, 0xDD, 0xB0) ), // 3
-                        colorManager.getColor( new RGB(0xCC, 0xCC, 0xA3) ), // 4
-                        colorManager.getColor( new RGB(0xBB, 0xBB, 0x95) ), // 5
-                        colorManager.getColor( new RGB(0xAA, 0xAA, 0x88) ), // 6
-                        colorManager.getColor( new RGB(0x99, 0x99, 0x7A) ), // 7
-                        colorManager.getColor( new RGB(0x88, 0x88, 0x6C) ), // 8
-                        colorManager.getColor( new RGB(0x77, 0x77, 0x5F) )  // 9
-                      };
-
+        = generateColorList( new int[] {
+                0xFFFFDD, // only one type; total consensus
+                0xEEEEBE, // two different types
+                0xDDDDB0, // three...
+                0xCCCCA3, // ...
+                0xBBBB95,
+                0xAAAA88,
+                0x99997A,
+                0x88886C,
+                0x77775F
+        } );
+    
     private Map<String, String> sequences; // sequence_name => sequence
     
     private int canvasWidthInSquares, canvasHeightInSquares;
@@ -205,6 +208,16 @@ public class Aligner extends EditorPart {
                : chars.size() < 10
                  ? Character.forDigit( chars.size(), 10 )
                  : '9';
+    }
+
+    static private Color[] generateColorList( int[] rgbList ) {
+        List<Color> colors = new ArrayList<Color>();
+        for ( int rgb : rgbList ) {
+            colors.add( colorManager.getColor( new RGB( (rgb >> 16) & 0xFF,
+                                                        (rgb >>  8) & 0xFF,
+                                                        (rgb >>  0) & 0xFF )));
+        }
+        return colors.toArray(new Color[0]);
     }
 
     @Override
