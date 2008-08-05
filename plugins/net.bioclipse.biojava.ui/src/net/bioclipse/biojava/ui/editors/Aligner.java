@@ -119,38 +119,41 @@ public class Aligner extends EditorPart {
         super.setInput(input);
         
         sequences = new LinkedHashMap<String, String>();
+        
+        // For now, we don't handle things that aren't files. Likely to change.
         if (input instanceof FileEditorInput) {
             FileEditorInput fei = (FileEditorInput)input;
             if (!fei.exists())
                 return;
             
             try {
-                //prepare a BufferedReader for file io
+                // Get a BufferedReader from the FileEditorInput.
                 BufferedReader br = new BufferedReader(
                     new FileReader(fei.getPath().toFile())
                 );
 
-                /*
-                 * get a Sequence Iterator over all the sequences in the file.
-                 * SeqIOTools.fileToBiojava() returns an Object. If the file read
-                 * is an alignment format like MSF and Alignment object is returned
-                 * otherwise a SequenceIterator is returned.
-                 */
+                // Get an iterator from the BufferedReader.
+                // The 'null' indicates that we don't care about which
+                // namespace the sequence ends up getting.
                 SequenceIterator iter = IOTools.readFastaProtein( br, null );
 
+                // Add the sequences one by one to the Map. Do minor cosmetics
+                // on the name by removing everything up to and including to
+                // the last '|', if any.
                 while ( iter.hasNext() ) {
                     Sequence s = iter.nextSequence();
                     String name = s.getName().replaceFirst( ".*\\|", "" );
                     sequences.put( name, s.seqString() );
                 }
-              }
-              catch (FileNotFoundException ex) {
-                //can't find file specified by the file editor input
+            }
+            catch (FileNotFoundException ex) {
+                // The file could not be found. TODO: This should be logged.
                 ex.printStackTrace();
-              }catch (BioException ex) {
-                //error parsing requested format
-                ex.printStackTrace();
-              }
+            }
+            catch ( BioException e ) {
+                // There was a parsing error. TODO: This should be logged.
+                e.printStackTrace();
+            }
 
             // We only show a consensus sequence if there is more than one
             // sequence already.
