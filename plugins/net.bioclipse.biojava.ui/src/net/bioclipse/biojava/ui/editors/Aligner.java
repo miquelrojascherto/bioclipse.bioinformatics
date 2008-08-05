@@ -9,16 +9,20 @@
 
 package net.bioclipse.biojava.ui.editors;
 
-import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import net.bioclipse.ui.editors.ColorManager;
 
-import org.eclipse.core.runtime.CoreException;
+import org.biojava.bio.BioException;
+import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.SequenceIterator;
+import org.biojavax.bio.seq.RichSequence.IOTools;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -114,52 +118,48 @@ public class Aligner extends EditorPart {
     public void setInput( IEditorInput input ) {
         super.setInput(input);
         
-        sequences     = new LinkedHashMap<String, String>();
+        sequences = new LinkedHashMap<String, String>();
         if (input instanceof FileEditorInput) {
             FileEditorInput fei = (FileEditorInput)input;
             if (!fei.exists())
                 return;
             
-            InputStream is;
             try {
-                is = fei.getFile().getContents();
-            } catch ( CoreException e ) {
-                e.printStackTrace();
-                return;
-            }
-            
-            Scanner sc = new Scanner(is);
-            StringBuilder sb = new StringBuilder();
-            String oldName = null;
-            
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                if (line.startsWith( ">" )) {
+                //prepare a BufferedReader for file io
+                BufferedReader br = new BufferedReader(
+                    new FileReader(fei.getPath().toFile())
+                );
 
-                    if ( oldName != null )
-                        sequences.put( oldName, sb.toString() );
+                /*
+                 * get a Sequence Iterator over all the sequences in the file.
+                 * SeqIOTools.fileToBiojava() returns an Object. If the file read
+                 * is an alignment format like MSF and Alignment object is returned
+                 * otherwise a SequenceIterator is returned.
+                 */
+                SequenceIterator iter = IOTools.readFastaProtein( br, null );
 
-                    line = line.split( "\\s+" )[0].replaceFirst( ".*\\|", "" );
-                    oldName = line.substring( 1 );
-
-                    sb = new StringBuilder();
+                while ( iter.hasNext() ) {
+                    Sequence s = iter.nextSequence();
+                    String name = s.getName().replaceFirst( ".*\\|", "" );
+                    sequences.put( name, s.seqString() );
                 }
-                else { // it's (part of) a sequence
-                    
-                    line.replaceAll( "\\n$", "" );
-                    sb.append(line);
-                }
-            }
-            if (sb.length() > 0)
-                sequences.put( oldName, sb.toString() );
-            
+              }
+              catch (FileNotFoundException ex) {
+                //can't find file specified by the file editor input
+                ex.printStackTrace();
+              }catch (BioException ex) {
+                //error parsing requested format
+                ex.printStackTrace();
+              }
+
             // We only show a consensus sequence if there is more than one
             // sequence already.
             consensusRow  = sequences.size();
             if (consensusRow > 1) {
-                sequences.put( "Consensus",
-                               consensusSequence( sequences.values() )
-                             );
+                sequences.put(
+                    "Consensus",
+                    consensusSequence( sequences.values() )
+                );
             }
         }
         
