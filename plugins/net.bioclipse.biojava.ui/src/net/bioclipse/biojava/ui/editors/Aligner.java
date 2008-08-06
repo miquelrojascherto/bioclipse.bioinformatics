@@ -94,9 +94,12 @@ public class Aligner extends EditorPart {
     private int consensusRow;
 
     private Point selectionStart = new Point(0, 0),
-                  selectionEnd = new Point(0, 0);
-    private boolean currentlySelecting = false,
-                    selectionVisible   = false;
+                  selectionEnd   = new Point(0, 0),
+                  dragStart      = new Point(0, 0),
+                  dragEnd        = new Point(0, 0);
+    private boolean currentlySelecting         = false,
+                    currentlyDraggingSelection = false,
+                    selectionVisible           = false;
     
     @Override
     public void doSave( IProgressMonitor monitor ) {
@@ -232,6 +235,49 @@ public class Aligner extends EditorPart {
         return true;
     }
 
+    private int[] selectionBounds() {
+        int xLeft   = Math.min( selectionStart.x, selectionEnd.x ),
+        xRight  = Math.max( selectionStart.x, selectionEnd.x ),
+        yTop    = Math.min( selectionStart.y, selectionEnd.y ),
+        yBottom = Math.max( selectionStart.y, selectionEnd.y );
+    
+        // clip
+        xLeft   = Math.max( xLeft, 0 );
+        xRight  = Math.min( xRight, canvasWidthInSquares * squareSize );
+        yTop    = Math.max( yTop, 0 );
+        yBottom = Math.min( yBottom,
+                        (canvasHeightInSquares-1) * squareSize );
+    
+        // round down
+        xLeft  =                   xLeft / squareSize * squareSize;
+        yTop   =                    yTop / squareSize * squareSize;
+    
+        // round up
+        xRight  =  (xRight+squareSize-1) / squareSize * squareSize - 1;
+        yBottom = (yBottom+squareSize-1) / squareSize * squareSize - 1;
+    
+        // make sure a selection always has positive area
+        if ( xRight <= xLeft )
+            xRight = xLeft + squareSize - 1;
+        if ( yBottom <= yTop
+             && yTop < (canvasHeightInSquares-1) * squareSize )
+            yBottom = yTop + squareSize - 1;
+    
+        // special case: mark along the consensus row
+        if ( yTop == yBottom + 1 )
+            yTop = 0;
+        
+        // take dragging into account
+        if (currentlyDraggingSelection) {
+            xLeft   += dragEnd.x - dragStart.x;
+            xRight  += dragEnd.x - dragStart.x;
+            yTop    += dragEnd.y - dragStart.y;
+            yBottom += dragEnd.y - dragStart.y;
+        }
+    
+        return new int[] { xLeft, yTop, xRight, yBottom };
+    }
+    
     @Override
     public void createPartControl( Composite parent ) {
         GridLayout layout = new GridLayout();
@@ -356,37 +402,11 @@ public class Aligner extends EditorPart {
                 if (!selectionVisible)
                     return;
 
-                int xLeft   = Math.min( selectionStart.x, selectionEnd.x ),
-                    xRight  = Math.max( selectionStart.x, selectionEnd.x ),
-                    yTop    = Math.min( selectionStart.y, selectionEnd.y ),
-                    yBottom = Math.max( selectionStart.y, selectionEnd.y );
-                
-                // clip
-                xLeft   = Math.max( xLeft, 0 );
-                xRight  = Math.min( xRight, canvasWidthInSquares * squareSize );
-                yTop    = Math.max( yTop, 0 );
-                yBottom = Math.min( yBottom,
-                                    (canvasHeightInSquares-1) * squareSize );
-                
-                // round down
-                xLeft  =                   xLeft / squareSize * squareSize;
-                yTop   =                    yTop / squareSize * squareSize;
-                
-                // round up
-                xRight  =  (xRight+squareSize-1) / squareSize * squareSize - 1;
-                yBottom = (yBottom+squareSize-1) / squareSize * squareSize - 1;
-                
-                // make sure a selection always has positive area
-                if ( xRight <= xLeft )
-                    xRight = xLeft + squareSize - 1;
-                if ( yBottom <= yTop
-                     && yTop < (canvasHeightInSquares-1) * squareSize )
-                    yBottom = yTop + squareSize - 1;
-                
-                // Special case: mark along the consensus row
-                if ( yTop == yBottom + 1 ) {
-                    yTop = 0;
-                }
+                int sb[]    = selectionBounds(),
+                    xLeft   = sb[0],
+                    yTop    = sb[1],
+                    xRight  = sb[2],
+                    yBottom = sb[3];
                 
                 gc.setForeground( selectionColor1 );
                 gc.drawRectangle( xLeft, yTop,
@@ -407,7 +427,24 @@ public class Aligner extends EditorPart {
             }
 
             public void mouseDown( MouseEvent e ) {
-                if (e.button == 1) {
+                if (e.button != 1)
+                    return;
+                
+                int sb[]    = selectionBounds(),
+                    xLeft   = sb[0],
+                    yTop    = sb[1],
+                    xRight  = sb[2],
+                    yBottom = sb[3];
+                
+                if ( selectionVisible
+                     && xLeft <= e.x && e.x <= xRight
+                     && yTop  <= e.y && e.y <= yBottom ) {
+                    
+                    currentlyDraggingSelection = true;
+                    dragStart.x = dragEnd.x = e.x;
+                    dragStart.y = dragEnd.y = e.y;
+                }
+                else {
                     currentlySelecting = true;
                     selectionVisible = false;
                     selectionStart.x = selectionEnd.x = e.x;
@@ -417,7 +454,26 @@ public class Aligner extends EditorPart {
             }
 
             public void mouseUp( MouseEvent e ) {
-                currentlySelecting = false;
+                if (currentlyDraggingSelection) {
+                    // round off
+                    int xDelta = (dragEnd.x - dragStart.x + squareSize/2
+                                  * (dragEnd.x < dragStart.x ? -1 : 1))
+                                 / squareSize * squareSize,
+                        yDelta = (dragEnd.y - dragStart.y
+                                  + squareSize/2
+                                  * (dragEnd.x < dragStart.x ? -1 : 1))
+                                 / squareSize * squareSize;
+                    
+                    selectionStart.x += xDelta;
+                    selectionEnd.x   += xDelta;
+                    
+                    selectionStart.y += yDelta;
+                    selectionEnd.y   += yDelta;
+                    
+                    canvas.redraw();
+                }
+                
+                currentlySelecting = currentlyDraggingSelection = false;
             }
             
         });
@@ -455,6 +511,13 @@ public class Aligner extends EditorPart {
                   }
                   
                   canvas.redraw();
+                }
+                
+                if (currentlyDraggingSelection) {
+                    dragEnd.x = e.x;
+                    dragEnd.y = e.y;
+                    
+                    canvas.redraw();
                 }
             }
             
