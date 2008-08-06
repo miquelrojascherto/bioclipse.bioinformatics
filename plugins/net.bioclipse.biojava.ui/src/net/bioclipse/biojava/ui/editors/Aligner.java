@@ -71,7 +71,7 @@ public class Aligner extends EditorPart {
         buttonColor     = colorManager.getColor( new RGB(0x66, 0x66, 0x66) ),
         consensusColor  = colorManager.getColor( new RGB(0xAA, 0xAA, 0xAA) ),
         selectionColor1 = display.getSystemColor( SWT.COLOR_BLACK ),
-        selectionColor2 = display.getSystemColor( SWT.COLOR_WHITE );
+        selectionColor2 = display.getSystemColor( SWT.COLOR_BLACK );
     
     static private final Color[] consensusColors
         = generateColorList( new int[] {
@@ -95,7 +95,8 @@ public class Aligner extends EditorPart {
 
     private Point selectionStart = new Point(0, 0),
                   selectionEnd = new Point(0, 0);
-    private boolean currentlySelecting = false;
+    private boolean currentlySelecting = false,
+                    selectionVisible   = false;
     
     @Override
     public void doSave( IProgressMonitor monitor ) {
@@ -351,40 +352,50 @@ public class Aligner extends EditorPart {
             }
             
             private void drawSelection( GC gc ) {
+                
+                if (!selectionVisible)
+                    return;
 
-                int xRight  = Math.min( selectionStart.x, selectionEnd.x ),
-                    xLeft   = Math.max( selectionStart.x, selectionEnd.x ),
+                int xLeft   = Math.min( selectionStart.x, selectionEnd.x ),
+                    xRight  = Math.max( selectionStart.x, selectionEnd.x ),
                     yTop    = Math.min( selectionStart.y, selectionEnd.y ),
                     yBottom = Math.max( selectionStart.y, selectionEnd.y );
                 
-                // clipping
-                xRight  = Math.max( xRight, 0 );
-                xLeft   = Math.min( xLeft, canvasWidthInSquares * squareSize );
+                // clip
+                xLeft   = Math.max( xLeft, 0 );
+                xRight  = Math.min( xRight, canvasWidthInSquares * squareSize );
                 yTop    = Math.max( yTop, 0 );
                 yBottom = Math.min( yBottom,
                                     (canvasHeightInSquares-1) * squareSize );
                 
-                // rounding down
-                xRight  =                 xRight / squareSize * squareSize;
-                yTop    =                   yTop / squareSize * squareSize;
+                // round down
+                xLeft  =                   xLeft / squareSize * squareSize;
+                yTop   =                    yTop / squareSize * squareSize;
                 
-                // rounding up
-                xLeft   =   (xLeft+squareSize-1) / squareSize * squareSize - 1;
+                // round up
+                xRight  =  (xRight+squareSize-1) / squareSize * squareSize - 1;
                 yBottom = (yBottom+squareSize-1) / squareSize * squareSize - 1;
                 
-                // Special case: marking along the consensus row
+                // make sure a selection always has positive area
+                if ( xRight <= xLeft )
+                    xRight = xLeft + squareSize - 1;
+                if ( yBottom <= yTop
+                     && yTop < (canvasHeightInSquares-1) * squareSize )
+                    yBottom = yTop + squareSize - 1;
+                
+                // Special case: mark along the consensus row
                 if ( yTop == yBottom + 1 ) {
                     yTop = 0;
                 }
                 
                 gc.setForeground( selectionColor1 );
-                gc.drawRectangle( xRight, yTop,
-                                  xLeft - xRight, yBottom - yTop );
+                gc.drawRectangle( xLeft, yTop,
+                                  xRight - xLeft, yBottom - yTop );
                 
                 gc.setBackground( selectionColor2 );
                 gc.setAlpha( 64 ); // 25%
-                gc.fillRectangle( xRight + 1, yTop + 1,
-                                  xLeft - xRight - 2, yBottom - yTop - 2 );
+                gc.fillRectangle( xLeft + 1, yTop + 1,
+                                  xRight - xLeft - 1, yBottom - yTop - 1 );
                 gc.setAlpha( 255 ); // opaque again
             }
         });
@@ -398,6 +409,7 @@ public class Aligner extends EditorPart {
             public void mouseDown( MouseEvent e ) {
                 if (e.button == 1) {
                     currentlySelecting = true;
+                    selectionVisible = false;
                     selectionStart.x = selectionEnd.x = e.x;
                     selectionStart.y = selectionEnd.y = e.y;
                     canvas.redraw();
@@ -418,6 +430,8 @@ public class Aligner extends EditorPart {
                 if (currentlySelecting) {
                   selectionEnd.x = e.x;
                   selectionEnd.y = e.y;
+                  
+                  selectionVisible = true;
 
                   int viewPortLeft  = -c.getLocation().x,
                       viewPortRight = viewPortLeft + sc.getBounds().width,
@@ -450,5 +464,4 @@ public class Aligner extends EditorPart {
     @Override
     public void setFocus() {
     }
-
 }
