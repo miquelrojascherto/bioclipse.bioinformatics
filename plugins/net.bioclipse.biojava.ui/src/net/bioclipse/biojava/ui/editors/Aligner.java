@@ -454,15 +454,24 @@ public class Aligner extends EditorPart {
             }
 
             public void mouseUp( MouseEvent e ) {
+                
                 if (currentlyDraggingSelection) {
-                    // round off
-                    int xDelta = (dragEnd.x - dragStart.x + squareSize/2
-                                  * (dragEnd.x < dragStart.x ? -1 : 1))
-                                 / squareSize * squareSize,
-                        yDelta = (dragEnd.y - dragStart.y
-                                  + squareSize/2
-                                  * (dragEnd.x < dragStart.x ? -1 : 1))
-                                 / squareSize * squareSize;
+                    // The expressions do three things:
+                    //
+                    // 1. Calculates the distance dragged (end minus start)
+                    // 2. Adds half a square in that direction
+                    // 3. Rounds towards zero to the closest squareSize point
+                    //
+                    // The second step is required precisely because the third
+                    // step rounds down.
+                    int xDelta
+                          = (dragEnd.x - dragStart.x                       // 1
+                             + squareSize/2 * (dragEnd.x<dragStart.x?-1:1) // 2
+                            ) / squareSize * squareSize,                   // 3
+                        yDelta
+                          = (dragEnd.y - dragStart.y                       // 1
+                             + squareSize/2 * (dragEnd.y<dragStart.y?-1:1) // 2
+                            ) / squareSize * squareSize;                   // 3
                     
                     selectionStart.x += xDelta;
                     selectionEnd.x   += xDelta;
