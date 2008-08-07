@@ -349,8 +349,10 @@ public class Aligner extends EditorPart {
                           + 2; // compensate for 2 possible round-downs
                 
                 drawSequences(fasta, firstVisibleColumn, lastVisibleColumn, gc);
-                
                 drawSelection( gc );
+                drawConsensusSequence(
+                    fasta[canvasHeightInSquares-1],
+                    firstVisibleColumn, lastVisibleColumn, gc);
             }
 
             private void drawSequences( final char[][] fasta,
@@ -360,7 +362,9 @@ public class Aligner extends EditorPart {
                 for ( int column = firstVisibleColumn;
                       column < lastVisibleColumn; ++column ) {
 
-                    for ( int row = 0; row < canvasHeightInSquares; ++row ) {
+                    int xCoord = column * squareSize;
+
+                    for ( int row = 0; row < canvasHeightInSquares-1; ++row ) {
                         
                         char c = fasta[row].length > column
                                  ? fasta[row][column] : ' ';
@@ -375,18 +379,6 @@ public class Aligner extends EditorPart {
                           :    'C' == c           ? cysteineColor
                                                   : normalAAColor );
                         
-                        if ( row == consensusRow ) {
-                            
-                            int consensusDegree = 1;
-                            if ( Character.isDigit(c) )
-                                consensusDegree = c - '0';
-                            
-                            gc.setBackground(
-                                consensusColors[ consensusDegree-1 ]
-                            );
-                        }
-                        
-                        int xCoord = column * squareSize;
                         int yCoord =    row * squareSize;
                         
                         gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
@@ -394,6 +386,28 @@ public class Aligner extends EditorPart {
                         if ( Character.isUpperCase( c ))
                             gc.drawText( "" + c, xCoord + 4, yCoord + 2 );
                     }
+                }
+            }
+            
+            private void drawConsensusSequence( final char[] sequence,
+                                                int firstVisibleColumn,
+                                                int lastVisibleColumn, GC gc ) {
+
+                for ( int column = firstVisibleColumn;
+                      column < lastVisibleColumn; ++column ) {
+
+                    char c = sequence.length > column ? sequence[column] : ' ';
+                    int consensusDegree = Character.isDigit(c) ? c-'0' : 1;
+                            
+                    gc.setBackground(consensusColors[ consensusDegree-1 ]);
+                        
+                    int xCoord = column                    * squareSize;
+                    int yCoord = (canvasHeightInSquares-1) * squareSize;
+                        
+                    gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
+                        
+                    if ( Character.isUpperCase( c ))
+                        gc.drawText( "" + c, xCoord + 4, yCoord + 2 );
                 }
             }
             
