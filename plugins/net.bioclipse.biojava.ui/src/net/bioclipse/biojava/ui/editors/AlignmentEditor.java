@@ -14,7 +14,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
-
 public class AlignmentEditor extends MultiPageEditorPart {
 
     @Override

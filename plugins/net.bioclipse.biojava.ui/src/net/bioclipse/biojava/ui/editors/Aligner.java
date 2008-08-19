@@ -379,7 +379,7 @@ public class Aligner extends EditorPart {
                           :    'C' == c           ? cysteineColor
                                                   : normalAAColor );
                         
-                        int yCoord =    row * squareSize;
+                        int yCoord = row * squareSize;
                         
                         gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
                         
@@ -393,16 +393,17 @@ public class Aligner extends EditorPart {
                                                 int firstVisibleColumn,
                                                 int lastVisibleColumn, GC gc ) {
 
+                int yCoord = (canvasHeightInSquares-1) * squareSize;
+                
                 for ( int column = firstVisibleColumn;
                       column < lastVisibleColumn; ++column ) {
 
                     char c = sequence.length > column ? sequence[column] : ' ';
-                    int consensusDegree = Character.isDigit(c) ? c-'0' : 1;
+                    int consensusDegree = Character.isDigit(c) ? c - '0' : 1;
                             
                     gc.setBackground(consensusColors[ consensusDegree-1 ]);
                         
-                    int xCoord = column                    * squareSize;
-                    int yCoord = (canvasHeightInSquares-1) * squareSize;
+                    int xCoord = column * squareSize;
                         
                     gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
                         
@@ -472,12 +473,12 @@ public class Aligner extends EditorPart {
                 if (currentlyDraggingSelection) {
                     // The expressions do three things:
                     //
-                    // 1. Calculates the distance dragged (end minus start)
-                    // 2. Adds half a square in that direction
-                    // 3. Rounds towards zero to the closest squareSize point
+                    // 1. Calculate the distance dragged (end minus start)
+                    // 2. Add half a square in that direction
+                    // 3. Round towards zero to the closest squareSize point
                     //
                     // The second step is required precisely because the third
-                    // step rounds down.
+                    // step rounds towards zero.
                     int xDelta
                           = (dragEnd.x - dragStart.x                       // 1
                              + squareSize/2 * (dragEnd.x<dragStart.x?-1:1) // 2
