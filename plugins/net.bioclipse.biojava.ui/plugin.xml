@@ -30,7 +30,7 @@
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             extensions="fasta"
             icon="icons/logo/logo_16_trans.gif"
-            id="net.bioclipse.ui.editors.AlignmentEditor"
+            id="net.bioclipse.biojava.ui.editors.AlignmentEditor"
             name="Alignment">
             <contentTypeBinding
                   contentTypeId="net.bioclipse.biojava.ui.sequenceType">
@@ -221,6 +221,14 @@
             name="LongRunningCommand"/>
    </extension>
 
+   <extension point="org.eclipse.core.expressions.definitions">
+      <definition id="net.bioclipse.definitions.activeAlignmentEditor">
+         <with variable="activeEditorId">
+            <equals value="net.bioclipse.biojava.ui.editors.AlignmentEditor" />
+         </with>
+      </definition>
+   </extension>
+
   <extension point="org.eclipse.ui.menus">
      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
         <command commandId="net.bioclipse.biojava.ui.LongRunningCommand"
@@ -232,7 +240,70 @@
            </visibleWhen>
         </command>
      </menuContribution>
+     
+     <menuContribution
+         locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         
+        <toolbar id="net.bioclipse.biojava.ui.editor.toolbar">
+          <command commandId="net.bioclipse.biojava.ui.actions.zoomout"
+                   tooltip="Zoom out"
+                   icon="icons/zoom_out.png">
+            <visibleWhen>
+              <reference
+                definitionId="net.bioclipse.definitions.activeAlignmentEditor">
+              </reference>
+            </visibleWhen>
+          </command>
+         
+          <separator name="additions"
+                     visible="false" />
+        </toolbar>
+     </menuContribution>
+
+     <menuContribution
+         locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         
+        <toolbar id="net.bioclipse.biojava.ui.editor.toolbar">
+          <command commandId="net.bioclipse.biojava.ui.actions.zoomin"
+                   tooltip="Zoom in"
+                   icon="icons/zoom_in.png">
+            <visibleWhen>
+              <reference
+                definitionId="net.bioclipse.definitions.activeAlignmentEditor">
+              </reference>
+            </visibleWhen>
+          </command>
+         
+          <separator name="additions"
+                     visible="false" />
+        </toolbar>
+     </menuContribution>
   </extension>
 
+  <extension point="org.eclipse.ui.commands">
+    <command id="net.bioclipse.biojava.ui.actions.zoomin"
+             description="Zoom in"
+             name="Zoom in">
+    </command>
+  </extension>
+
+  <extension point="org.eclipse.ui.handlers">
+    <handler class="net.bioclipse.biojava.ui.handlers.ZoomInHandler"
+            commandId="net.bioclipse.biojava.ui.actions.zoomin">
+    </handler>
+  </extension>
+
+  <extension point="org.eclipse.ui.commands">
+    <command id="net.bioclipse.biojava.ui.actions.zoomout"
+             description="Zoom out"
+             name="Zoom out">
+    </command>
+  </extension>
+
+  <extension point="org.eclipse.ui.handlers">
+    <handler class="net.bioclipse.biojava.ui.handlers.ZoomOutHandler"
+            commandId="net.bioclipse.biojava.ui.actions.zoomout">
+    </handler>
+  </extension>
 
 </plugin>
