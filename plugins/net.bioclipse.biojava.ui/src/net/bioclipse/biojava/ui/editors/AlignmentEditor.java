@@ -16,11 +16,14 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 
 public class AlignmentEditor extends MultiPageEditorPart {
 
+    private Aligner aligner;
+    
     @Override
     protected void createPages() {
         setPartName( getEditorInput().getName() );
         try {
-            int pageIndex1 = this.addPage( new Aligner(), getEditorInput() );
+            int pageIndex1 = this.addPage( aligner = new Aligner(),
+                                           getEditorInput() );
             setPageText(pageIndex1, "Alignment");
             int pageIndex2 = this.addPage( new TextEditor(), getEditorInput() );
             setPageText(pageIndex2, "Source");
@@ -42,4 +45,11 @@ public class AlignmentEditor extends MultiPageEditorPart {
         return false;
     }
 
+    public void zoomIn() {
+        aligner.zoomIn();
+    }
+
+    public void zoomOut() {
+        aligner.zoomOut();
+    }
 }

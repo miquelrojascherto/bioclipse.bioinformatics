@@ -14,12 +14,12 @@ public class ZoomInHandler extends AbstractHandler implements IHandler {
 
     public Object execute( ExecutionEvent event ) throws ExecutionException {
 
-        IEditorPart editor = HandlerUtil.getActiveEditor(event);
-        
+        IEditorPart editor = HandlerUtil.getActiveEditor( event );
+
         if (!(editor instanceof AlignmentEditor))
             return null;
-        
-        System.out.println("Zoom in!");
+
+        ((AlignmentEditor) editor).zoomIn();
         
         return null;
     }

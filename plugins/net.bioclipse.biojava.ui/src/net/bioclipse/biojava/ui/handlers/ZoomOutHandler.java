@@ -19,7 +19,7 @@ public class ZoomOutHandler extends AbstractHandler implements IHandler {
         if (!(editor instanceof AlignmentEditor))
             return null;
         
-        System.out.println("Zoom out!");
+        ((AlignmentEditor) editor).zoomOut();
         
         return null;
     }

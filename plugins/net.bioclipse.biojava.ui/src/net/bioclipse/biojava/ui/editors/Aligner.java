@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -54,6 +56,8 @@ import org.eclipse.ui.part.EditorPart;
 public class Aligner extends EditorPart {
 
     private int squareSize = 20;
+    private final static int MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS = 8,
+                             NAME_CANVAS_WIDTH_IN_SQUARES = 8;
 
     static final Display display = Display.getCurrent();
     static final ColorManager colorManager = new ColorManager();
@@ -100,6 +104,12 @@ public class Aligner extends EditorPart {
     private boolean currentlySelecting         = false,
                     currentlyDraggingSelection = false,
                     selectionVisible           = false;
+
+    private Canvas nameCanvas;
+    private Canvas sequenceCanvas;
+    private GridData data;
+    private Composite parent;
+    private Composite c;
     
     @Override
     public void doSave( IProgressMonitor monitor ) {
@@ -202,17 +212,18 @@ public class Aligner extends EditorPart {
     private static char consensusChar( final Collection<String> sequences,
                                        final int index ) {
         
-        Map<Character, Boolean> chars
+        Map<Character, Boolean> columnChars
             = new HashMap<Character, Boolean>();
         
         for ( String seq : sequences )
-            chars.put( seq.length() > index ? seq.charAt(index) : '\0', true );
+            columnChars.put( seq.length() > index
+                               ? seq.charAt(index)
+                               : '\0',
+                             true );
         
-        return chars.size() == 1
-               ? chars.keySet().iterator().next()
-               : chars.size() < 10
-                 ? Character.forDigit( chars.size(), 10 )
-                 : '9';
+        return columnChars.size() == 1
+               ? columnChars.keySet().iterator().next()
+               : Character.forDigit( Math.min(columnChars.size(), 9), 10 );
     }
 
     static private Color[] generateColorList( int[] rgbList ) {
@@ -237,16 +248,15 @@ public class Aligner extends EditorPart {
 
     private int[] selectionBounds() {
         int xLeft   = Math.min( selectionStart.x, selectionEnd.x ),
-        xRight  = Math.max( selectionStart.x, selectionEnd.x ),
-        yTop    = Math.min( selectionStart.y, selectionEnd.y ),
-        yBottom = Math.max( selectionStart.y, selectionEnd.y );
+            xRight  = Math.max( selectionStart.x, selectionEnd.x ),
+            yTop    = Math.min( selectionStart.y, selectionEnd.y ),
+            yBottom = Math.max( selectionStart.y, selectionEnd.y );
     
         // clip
         xLeft   = Math.max( xLeft, 0 );
         xRight  = Math.min( xRight, canvasWidthInSquares * squareSize );
         yTop    = Math.max( yTop, 0 );
-        yBottom = Math.min( yBottom,
-                        (canvasHeightInSquares-1) * squareSize );
+        yBottom = Math.min( yBottom, (canvasHeightInSquares-1) * squareSize );
     
         // round down
         xLeft  =                   xLeft / squareSize * squareSize;
@@ -280,34 +290,40 @@ public class Aligner extends EditorPart {
     
     @Override
     public void createPartControl( Composite parent ) {
+        
+        this.parent = parent;
+        
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         layout.horizontalSpacing = 0;
         layout.verticalSpacing = 0;
         parent.setLayout( layout );
         
-        Canvas nameCanvas = new Canvas( parent, SWT.NONE );
-        GridData data = new GridData(GridData.FILL_VERTICAL);
-        data.widthHint = 8 * squareSize;
+        nameCanvas = new Canvas( parent, SWT.NONE );
+        data = new GridData(GridData.FILL_VERTICAL);
         nameCanvas.setLayoutData( data );
         
         nameCanvas.addPaintListener( new PaintListener() {
             public void paintControl(PaintEvent e) {
                 GC gc = e.gc;
-                gc.setForeground( nameColor );
                 gc.setBackground( buttonColor );
-                gc.setTextAntialias( SWT.ON );
-                gc.setFont( new Font(gc.getDevice(), "Arial", 14, SWT.NONE) );
+                if (squareSize >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS) {
+                    gc.setFont( new Font(gc.getDevice(),
+                                         "Arial",
+                                         (int)(.7 * squareSize),
+                                         SWT.NONE) );
+                    gc.setForeground( nameColor );
+                    gc.setTextAntialias( SWT.ON );
+                }
 
                 int index = 0;
                 for ( String name : sequences.keySet() ) {
-                    
                     if ( index == consensusRow )
                         gc.setBackground( consensusColor );
-                    
                     gc.fillRectangle(0, index * squareSize,
                                     8 * squareSize, squareSize);
-                    gc.drawText( name, 5, index * squareSize + 2 );
+                    if (squareSize >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS)
+                        gc.drawText( name, 5, index * squareSize + 2 );
                     ++index;
                 }
             }
@@ -319,13 +335,12 @@ public class Aligner extends EditorPart {
                                         | GridData.FILL_BOTH);
         sc.setLayoutData( sc_data );
         
-        final Composite c = new Composite(sc, SWT.NONE);
+        c = new Composite(sc, SWT.NONE);
         c.setLayout( new FillLayout() );
         
-        final Canvas canvas = new Canvas( c, SWT.NONE );
-        canvas.setLocation( 0, 0 );
-        c.setSize( canvasWidthInSquares * squareSize,
-                   canvasHeightInSquares * squareSize );
+        sequenceCanvas = new Canvas( c, SWT.NONE );
+        sequenceCanvas.setLocation( 0, 0 );
+        setCanvasSizes();
         sc.setContent( c );
         
         final char fasta[][] = new char[ sequences.size() ][];
@@ -334,12 +349,17 @@ public class Aligner extends EditorPart {
         for ( String sequence : sequences.values() )
             fasta[i++] = sequence.toCharArray();
         
-        canvas.addPaintListener( new PaintListener() {
+        sequenceCanvas.addPaintListener( new PaintListener() {
             public void paintControl(PaintEvent e) {
                 GC gc = e.gc;
-                gc.setTextAntialias( SWT.ON );
-                gc.setFont( new Font(gc.getDevice(), "Arial", 14, SWT.NONE) );
-                gc.setForeground( textColor );
+                if ( squareSize >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS ) {
+                    gc.setTextAntialias( SWT.ON );
+                    gc.setFont( new Font(gc.getDevice(),
+                                         "Arial",
+                                         (int)(.7 * squareSize),
+                                         SWT.NONE) );
+                    gc.setForeground( textColor );
+                }
 
                 int firstVisibleColumn
                         = sc.getHorizontalBar().getSelection() / squareSize,
@@ -381,9 +401,12 @@ public class Aligner extends EditorPart {
                         
                         int yCoord = row * squareSize;
                         
-                        gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
+                        gc.fillRectangle(xCoord, yCoord,
+                                         squareSize, squareSize);
                         
-                        if ( Character.isUpperCase( c ))
+                        if ( Character.isUpperCase( c )
+                             && squareSize
+                                  >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS )
                             gc.drawText( "" + c, xCoord + 4, yCoord + 2 );
                     }
                 }
@@ -407,7 +430,9 @@ public class Aligner extends EditorPart {
                         
                     gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
                         
-                    if ( Character.isUpperCase( c ))
+                    if ( Character.isUpperCase( c )
+                         && squareSize
+                              >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS )
                         gc.drawText( "" + c, xCoord + 4, yCoord + 2 );
                 }
             }
@@ -434,8 +459,8 @@ public class Aligner extends EditorPart {
                 gc.setAlpha( 255 ); // opaque again
             }
         });
-
-        canvas.addMouseListener( new MouseListener() {
+        
+        sequenceCanvas.addMouseListener( new MouseListener() {
 
             public void mouseDoubleClick( MouseEvent e ) {
                 // we're not interested in double clicks
@@ -464,7 +489,7 @@ public class Aligner extends EditorPart {
                     selectionVisible = false;
                     selectionStart.x = selectionEnd.x = e.x;
                     selectionStart.y = selectionEnd.y = e.y;
-                    canvas.redraw();
+                    sequenceCanvas.redraw();
                 }
             }
 
@@ -490,11 +515,11 @@ public class Aligner extends EditorPart {
                     
                     selectionStart.x += xDelta;
                     selectionEnd.x   += xDelta;
-                    
+
                     selectionStart.y += yDelta;
                     selectionEnd.y   += yDelta;
                     
-                    canvas.redraw();
+                    sequenceCanvas.redraw();
                 }
                 
                 currentlySelecting = currentlyDraggingSelection = false;
@@ -502,7 +527,7 @@ public class Aligner extends EditorPart {
             
         });
         
-        canvas.addMouseMoveListener( new MouseMoveListener() {
+        sequenceCanvas.addMouseMoveListener( new MouseMoveListener() {
 
             public void mouseMove( MouseEvent e ) {
 
@@ -534,14 +559,14 @@ public class Aligner extends EditorPart {
                       c.setLocation( -viewPortLeft, -viewPortTop );
                   }
                   
-                  canvas.redraw();
+                  sequenceCanvas.redraw();
                 }
                 
                 if (currentlyDraggingSelection) {
                     dragEnd.x = e.x;
                     dragEnd.y = e.y;
                     
-                    canvas.redraw();
+                    sequenceCanvas.redraw();
                 }
             }
             
@@ -550,5 +575,28 @@ public class Aligner extends EditorPart {
 
     @Override
     public void setFocus() {
+    }
+
+    private void setCanvasSizes() {
+
+        data.widthHint = squareSize >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS
+                         ? NAME_CANVAS_WIDTH_IN_SQUARES * squareSize : 0;
+        c.setSize( canvasWidthInSquares * squareSize,
+                   canvasHeightInSquares * squareSize );
+    }
+
+    public void zoomIn() {
+        squareSize++;
+        setCanvasSizes();
+        parent.layout();
+        parent.redraw();
+    }
+
+    public void zoomOut() {
+        if ( squareSize > 1 )
+            squareSize--;
+        setCanvasSizes();
+        parent.layout();
+        parent.redraw();
     }
 }
