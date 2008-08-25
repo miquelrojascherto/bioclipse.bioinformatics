@@ -97,16 +97,17 @@ public class Aligner extends EditorPart {
 
     private int consensusRow;
 
-    private Point selectionStart = new Point(0, 0),
-                  selectionEnd   = new Point(0, 0),
-                  dragStart      = new Point(0, 0),
-                  dragEnd        = new Point(0, 0);
+    private Point selectionStart                = new Point(0, 0),
+                  selectionEnd                  = new Point(0, 0),
+                  dragStart                     = new Point(0, 0),
+                  dragEnd                       = new Point(0, 0),
+                  selectionTopLeftInSquares     = new Point(0, 0),
+                  selectionBottomRightInSquares = new Point(0, 0);
+    
     private boolean currentlySelecting         = false,
                     currentlyDraggingSelection = false,
                     selectionVisible           = false;
 
-    private Canvas nameCanvas;
-    private Canvas sequenceCanvas;
     private GridData data;
     private Composite parent;
     private Composite c;
@@ -246,7 +247,7 @@ public class Aligner extends EditorPart {
         return true;
     }
 
-    private int[] selectionBounds() {
+    private void selectionBounds() {
         int xLeft   = Math.min( selectionStart.x, selectionEnd.x ),
             xRight  = Math.max( selectionStart.x, selectionEnd.x ),
             yTop    = Math.min( selectionStart.y, selectionEnd.y ),
@@ -259,33 +260,28 @@ public class Aligner extends EditorPart {
         yBottom = Math.min( yBottom, (canvasHeightInSquares-1) * squareSize );
     
         // round down
-        xLeft  =                   xLeft / squareSize * squareSize;
-        yTop   =                    yTop / squareSize * squareSize;
+        xLeft  =                   xLeft / squareSize;
+        yTop   =                    yTop / squareSize;
     
         // round up
-        xRight  =  (xRight+squareSize-1) / squareSize * squareSize - 1;
-        yBottom = (yBottom+squareSize-1) / squareSize * squareSize - 1;
+        xRight  =  (xRight+squareSize-1) / squareSize;
+        yBottom = (yBottom+squareSize-1) / squareSize;
     
         // make sure a selection always has positive area
         if ( xRight <= xLeft )
-            xRight = xLeft + squareSize - 1;
+            xRight = xLeft + 1;
         if ( yBottom <= yTop
-             && yTop < (canvasHeightInSquares-1) * squareSize )
-            yBottom = yTop + squareSize - 1;
+             && yTop < canvasHeightInSquares-1 )
+            yBottom = yTop + 1;
     
         // special case: mark along the consensus row
-        if ( yTop == yBottom + 1 )
+        if ( yTop == yBottom )
             yTop = 0;
-        
-        // take dragging into account
-        if (currentlyDraggingSelection) {
-            xLeft   += dragEnd.x - dragStart.x;
-            xRight  += dragEnd.x - dragStart.x;
-            yTop    += dragEnd.y - dragStart.y;
-            yBottom += dragEnd.y - dragStart.y;
-        }
-    
-        return new int[] { xLeft, yTop, xRight, yBottom };
+
+        selectionTopLeftInSquares.x = xLeft;
+        selectionTopLeftInSquares.y = yTop;
+        selectionBottomRightInSquares.x = xRight;
+        selectionBottomRightInSquares.y = yBottom;
     }
     
     @Override
@@ -299,7 +295,7 @@ public class Aligner extends EditorPart {
         layout.verticalSpacing = 0;
         parent.setLayout( layout );
         
-        nameCanvas = new Canvas( parent, SWT.NONE );
+        final Canvas nameCanvas = new Canvas( parent, SWT.NONE );
         data = new GridData(GridData.FILL_VERTICAL);
         nameCanvas.setLayoutData( data );
         
@@ -338,7 +334,7 @@ public class Aligner extends EditorPart {
         c = new Composite(sc, SWT.NONE);
         c.setLayout( new FillLayout() );
         
-        sequenceCanvas = new Canvas( c, SWT.NONE );
+        final Canvas sequenceCanvas = new Canvas( c, SWT.NONE );
         sequenceCanvas.setLocation( 0, 0 );
         setCanvasSizes();
         sc.setContent( c );
@@ -442,20 +438,29 @@ public class Aligner extends EditorPart {
                 if (!selectionVisible)
                     return;
 
-                int sb[]    = selectionBounds(),
-                    xLeft   = sb[0],
-                    yTop    = sb[1],
-                    xRight  = sb[2],
-                    yBottom = sb[3];
+                int dragXDistance = dragEnd.x - dragStart.x,
+                    dragYDistance = dragEnd.y - dragStart.y,
+                    xLeft
+                      = selectionTopLeftInSquares.x * squareSize + dragXDistance,
+                    yTop
+                      = selectionTopLeftInSquares.y * squareSize + dragYDistance,
+                    xRight
+                      = selectionBottomRightInSquares.x   * squareSize + dragXDistance,
+                    yBottom
+                      = selectionBottomRightInSquares.y   * squareSize + dragYDistance;
                 
                 gc.setForeground( selectionColor1 );
-                gc.drawRectangle( xLeft, yTop,
-                                  xRight - xLeft, yBottom - yTop );
+                gc.drawRectangle( xLeft,
+                                  yTop,
+                                  xRight - xLeft - 1,
+                                  yBottom - yTop - 1 );
                 
                 gc.setBackground( selectionColor2 );
                 gc.setAlpha( 64 ); // 25%
-                gc.fillRectangle( xLeft + 1, yTop + 1,
-                                  xRight - xLeft - 1, yBottom - yTop - 1 );
+                gc.fillRectangle( xLeft           + 1,
+                                  yTop            + 1,
+                                  xRight - xLeft  - 1,
+                                  yBottom - yTop  - 1 );
                 gc.setAlpha( 255 ); // opaque again
             }
         });
@@ -469,12 +474,17 @@ public class Aligner extends EditorPart {
             public void mouseDown( MouseEvent e ) {
                 if (e.button != 1)
                     return;
-                
-                int sb[]    = selectionBounds(),
-                    xLeft   = sb[0],
-                    yTop    = sb[1],
-                    xRight  = sb[2],
-                    yBottom = sb[3];
+
+                int dragXDistance = dragEnd.x - dragStart.x,
+                    dragYDistance = dragEnd.y - dragStart.y,
+                    xLeft
+                      = selectionTopLeftInSquares.x * squareSize + dragXDistance,
+                    yTop
+                      = selectionTopLeftInSquares.y * squareSize + dragYDistance,
+                    xRight
+                      = selectionBottomRightInSquares.x   * squareSize + dragXDistance,
+                    yBottom
+                      = selectionBottomRightInSquares.y   * squareSize + dragYDistance;
                 
                 if ( selectionVisible
                      && xLeft <= e.x && e.x <= xRight
@@ -507,21 +517,22 @@ public class Aligner extends EditorPart {
                     int xDelta
                           = (dragEnd.x - dragStart.x                       // 1
                              + squareSize/2 * (dragEnd.x<dragStart.x?-1:1) // 2
-                            ) / squareSize * squareSize,                   // 3
+                            ) / squareSize,                                // 3
                         yDelta
                           = (dragEnd.y - dragStart.y                       // 1
                              + squareSize/2 * (dragEnd.y<dragStart.y?-1:1) // 2
-                            ) / squareSize * squareSize;                   // 3
+                            ) / squareSize;                                // 3
                     
-                    selectionStart.x += xDelta;
-                    selectionEnd.x   += xDelta;
+                    selectionTopLeftInSquares.x += xDelta;
+                    selectionBottomRightInSquares.x   += xDelta;
 
-                    selectionStart.y += yDelta;
-                    selectionEnd.y   += yDelta;
+                    selectionTopLeftInSquares.y += yDelta;
+                    selectionBottomRightInSquares.y   += yDelta;
                     
                     sequenceCanvas.redraw();
                 }
                 
+                dragEnd = new Point(dragStart.x, dragStart.y);
                 currentlySelecting = currentlyDraggingSelection = false;
             }
             
@@ -560,6 +571,8 @@ public class Aligner extends EditorPart {
                   }
                   
                   sequenceCanvas.redraw();
+                  
+                  selectionBounds();
                 }
                 
                 if (currentlyDraggingSelection) {
