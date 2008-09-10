@@ -29,8 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -340,10 +338,12 @@ public class Aligner extends EditorPart {
         sc.setContent( c );
         
         final char fasta[][] = new char[ sequences.size() ][];
-        
-        int i = 0;
-        for ( String sequence : sequences.values() )
-            fasta[i++] = sequence.toCharArray();
+
+        {
+            int i = 0;
+            for ( String sequence : sequences.values() )
+                fasta[i++] = sequence.toCharArray();
+        }
         
         sequenceCanvas.addPaintListener( new PaintListener() {
             public void paintControl(PaintEvent e) {

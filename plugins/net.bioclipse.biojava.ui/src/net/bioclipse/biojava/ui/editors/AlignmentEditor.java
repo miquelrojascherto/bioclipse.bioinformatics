@@ -9,14 +9,18 @@
 
 package net.bioclipse.biojava.ui.editors;
 
+import net.bioclipse.biojava.ui.views.outline.AlignmentOutlinePage;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class AlignmentEditor extends MultiPageEditorPart {
 
     private Aligner aligner;
+    private AlignmentOutlinePage outlinePage;
     
     @Override
     protected void createPages() {
@@ -44,6 +48,20 @@ public class AlignmentEditor extends MultiPageEditorPart {
     public boolean isSaveAsAllowed() {
         return false;
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object getAdapter(Class required) {
+
+       // Adapter for Outline
+       if (IContentOutlinePage.class.equals(required))
+           return outlinePage
+               = outlinePage == null
+                   ? new AlignmentOutlinePage(getEditorInput(), this)
+                   : outlinePage;
+       
+       return super.getAdapter(required);
+   }
 
     public void zoomIn() {
         aligner.zoomIn();
