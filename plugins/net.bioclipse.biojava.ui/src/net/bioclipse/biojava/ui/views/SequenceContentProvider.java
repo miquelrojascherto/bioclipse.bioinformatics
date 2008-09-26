@@ -11,15 +11,11 @@
  ******************************************************************************/
 package net.bioclipse.biojava.ui.views;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 import net.bioclipse.biojava.business.Activator;
 import net.bioclipse.biojava.business.IBiojavaManager;
@@ -29,6 +25,7 @@ import net.bioclipse.core.domain.IBioObject;
 import net.bioclipse.core.domain.ISequence;
 import net.bioclipse.core.util.LogUtils;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
