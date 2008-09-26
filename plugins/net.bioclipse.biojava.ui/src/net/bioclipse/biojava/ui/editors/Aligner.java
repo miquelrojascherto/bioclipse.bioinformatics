@@ -56,11 +56,12 @@ public class Aligner extends EditorPart {
     private int squareSize = 20;
     private final static int MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS = 8,
                              NAME_CANVAS_WIDTH_IN_SQUARES = 8;
+    private int canvasWidthInSquares, canvasHeightInSquares;
 
     static final Display display = Display.getCurrent();
     static final ColorManager colorManager = new ColorManager();
     
-    static private final Color
+    static public final Color
         normalAAColor   = display.getSystemColor( SWT.COLOR_WHITE ),
         polarAAColor    = colorManager.getColor( new RGB(0xD0, 0xFF, 0xD0) ),
         nonpolarAAColor = colorManager.getColor( new RGB(0xFF, 0xFF, 0xD0) ),
@@ -75,7 +76,7 @@ public class Aligner extends EditorPart {
         selectionColor1 = display.getSystemColor( SWT.COLOR_BLACK ),
         selectionColor2 = display.getSystemColor( SWT.COLOR_BLACK );
     
-    static private final Color[] consensusColors
+    static public final Color[] consensusColors
         = generateColorList( new int[] {
                 0xFFFFDD, // only one type; total consensus
                 0xEEEEBE, // two different types
@@ -90,17 +91,16 @@ public class Aligner extends EditorPart {
     
     //          seqname, sequence
     private Map<String,  String> sequences;
-    
-    private int canvasWidthInSquares, canvasHeightInSquares;
-
     private int consensusRow;
 
-    private Point selectionStart                = new Point(0, 0),
-                  selectionEnd                  = new Point(0, 0),
-                  dragStart                     = new Point(0, 0),
-                  dragEnd                       = new Point(0, 0),
-                  selectionTopLeftInSquares     = new Point(0, 0),
-                  selectionBottomRightInSquares = new Point(0, 0);
+    private static Point np() { return new Point(0, 0); }
+    
+    private Point selectionStart                = np(),
+                  selectionEnd                  = np(),
+                  dragStart                     = np(),
+                  dragEnd                       = np(),
+                  selectionTopLeftInSquares     = np(),
+                  selectionBottomRightInSquares = np();
     
     private boolean currentlySelecting         = false,
                     currentlyDraggingSelection = false,
@@ -268,16 +268,15 @@ public class Aligner extends EditorPart {
         // make sure a selection always has positive area
         if ( xRight <= xLeft )
             xRight = xLeft + 1;
-        if ( yBottom <= yTop
-             && yTop < canvasHeightInSquares-1 )
+        if ( yBottom <= yTop && yTop < canvasHeightInSquares-1 )
             yBottom = yTop + 1;
     
         // special case: mark along the consensus row
         if ( yTop == yBottom )
             yTop = 0;
 
-        selectionTopLeftInSquares.x = xLeft;
-        selectionTopLeftInSquares.y = yTop;
+        selectionTopLeftInSquares.x     = xLeft;
+        selectionTopLeftInSquares.y     = yTop;
         selectionBottomRightInSquares.x = xRight;
         selectionBottomRightInSquares.y = yBottom;
     }

@@ -27,9 +27,10 @@ public class AlignmentEditor extends MultiPageEditorPart {
         setPartName( getEditorInput().getName() );
         try {
             int pageIndex1 = this.addPage( aligner = new Aligner(),
+                                           getEditorInput() ),
+                pageIndex2 = this.addPage( new TextEditor(),
                                            getEditorInput() );
             setPageText(pageIndex1, "Alignment");
-            int pageIndex2 = this.addPage( new TextEditor(), getEditorInput() );
             setPageText(pageIndex2, "Source");
         } catch ( PartInitException e ) {
             e.printStackTrace();
