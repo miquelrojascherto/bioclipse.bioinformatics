@@ -159,7 +159,8 @@ public class AlignmentOutlinePage extends Page
 //        sequenceCanvas.setLocation( 0, 0 );
         // ]]]
 
-        // Whereas this doesn't: [[[
+        // Whereas this doesn't: [[['
+        parent.setLayout( new FillLayout() );
         final ScrolledComposite sc
             = new ScrolledComposite( parent, SWT.H_SCROLL | SWT.V_SCROLL );
         GridData sc_data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING
@@ -171,6 +172,7 @@ public class AlignmentOutlinePage extends Page
     
         sequenceCanvas = new Canvas( parent, SWT.NONE );
         sequenceCanvas.setLocation( 0, 0 );
+        c.setSize(100,100);
         sc.setContent( c );
         // ]]]
 
