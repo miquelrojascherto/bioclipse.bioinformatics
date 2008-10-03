@@ -1,5 +1,6 @@
 package net.bioclipse.biojava.ui.views.outline;
 
+import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -23,6 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
@@ -30,6 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -154,27 +158,26 @@ public class AlignmentOutlinePage extends Page
 
     public void createControl(Composite parent) {
         
-        // The following works: [[[
-//        sequenceCanvas = new Canvas( parent, SWT.NONE );
-//        sequenceCanvas.setLocation( 0, 0 );
-        // ]]]
+        sequenceCanvas = new Canvas( parent, SWT.H_SCROLL );
+        sequenceCanvas.setSize( canvasWidthInSquares*squareSize,canvasHeightInSquares*squareSize );
+        ScrollBar sb =sequenceCanvas.getHorizontalBar(); 
+        sb.setMaximum( canvasWidthInSquares );
+        sb.addSelectionListener( new SelectionListener(){
 
-        // Whereas this doesn't: [[['
-        parent.setLayout( new FillLayout() );
-        final ScrolledComposite sc
-            = new ScrolledComposite( parent, SWT.H_SCROLL | SWT.V_SCROLL );
-        GridData sc_data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING
-                                        | GridData.FILL_BOTH);
-        sc.setLayoutData( sc_data );
-    
-        final Composite c = new Composite(sc, SWT.NONE);
-        c.setLayout( new FillLayout() );
-    
-        sequenceCanvas = new Canvas( parent, SWT.NONE );
-        sequenceCanvas.setLocation( 0, 0 );
-        c.setSize(100,100);
-        sc.setContent( c );
-        // ]]]
+            public void widgetDefaultSelected( SelectionEvent e ) {
+
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void widgetSelected( SelectionEvent e ) {
+
+                sequenceCanvas.redraw();
+                
+            }
+            
+        });
+        
 
         final char fasta[][] = new char[ sequences.size() ][];
 
@@ -203,7 +206,7 @@ public class AlignmentOutlinePage extends Page
 //                          + sc.getBounds().width / squareSize
 //                          + 2; // compensate for 2 possible round-downs
                 
-                int firstVisibleColumn = 0,
+                int firstVisibleColumn = sequenceCanvas.getHorizontalBar().getSelection(),
                     lastVisibleColumn
                         = sequences.values().iterator().next().length();
                 
@@ -216,11 +219,11 @@ public class AlignmentOutlinePage extends Page
             private void drawSequences( final char[][] fasta,
                                         int firstVisibleColumn,
                                         int lastVisibleColumn, GC gc ) {
-
+                int xCoord = 0;
                 for ( int column = firstVisibleColumn;
                       column < lastVisibleColumn; ++column ) {
 
-                    int xCoord = column * squareSize;
+                    
 
                     for ( int row = 0; row < canvasHeightInSquares-1; ++row ) {
                         
@@ -246,7 +249,9 @@ public class AlignmentOutlinePage extends Page
                              && squareSize
                                   >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS )
                             gc.drawText( "" + c, xCoord + 4, yCoord + 2 );
+                        
                     }
+                    xCoord += squareSize;
                 }
             }
             
@@ -255,7 +260,7 @@ public class AlignmentOutlinePage extends Page
                                                 int lastVisibleColumn, GC gc ) {
 
                 int yCoord = (canvasHeightInSquares-1) * squareSize;
-                
+                int xCoord = 0;
                 for ( int column = firstVisibleColumn;
                       column < lastVisibleColumn; ++column ) {
 
@@ -265,7 +270,7 @@ public class AlignmentOutlinePage extends Page
                     gc.setBackground(
                         Aligner.consensusColors[ consensusDegree-1 ]);
                         
-                    int xCoord = column * squareSize;
+                     
                         
                     gc.fillRectangle(xCoord, yCoord, squareSize, squareSize);
                         
@@ -273,6 +278,8 @@ public class AlignmentOutlinePage extends Page
                          && squareSize
                               >= MINIMUM_SQUARE_SIZE_FOR_TEXT_IN_PIXELS )
                         gc.drawText( "" + c, xCoord + 4, yCoord + 2 );
+                    
+                    xCoord += squareSize;
                 }
             }
         });
