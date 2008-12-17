@@ -10,12 +10,9 @@
  *     Ola Spjuth
  *
  ******************************************************************************/
-
 package net.bioclipse.biojava.business;
-
 import java.io.IOException;
 import java.io.InputStream;
-
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.biojava.domain.BiojavaRNASequence;
@@ -24,12 +21,10 @@ import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.Recorded;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.business.IBioclipseManager;
-
 /**
  * @author jonalv, ola
  */
 public interface IBiojavaManager extends IBioclipseManager {
-
     /**
      * Enum over the sequence formats supported by the Biojavamanager
      *
@@ -42,7 +37,6 @@ public interface IBiojavaManager extends IBioclipseManager {
         GENBANK,
         UNIPROT;
     }
-
     /**
      * Converts a BiojavaSequence to a String representation in a given format
      *
@@ -55,9 +49,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @Recorded
     public String renderAs( SequenceFormat format,
                             BiojavaSequence seq) throws IOException;
-
     //TODO renderAs giving a stream?
-
     /**
      * Loads a BiojavaSequence from file
      *
@@ -67,8 +59,6 @@ public interface IBiojavaManager extends IBioclipseManager {
      */
     @Recorded
     public BiojavaSequence loadSequence( String path ) throws IOException;
-
-
      /**
      * Load sequenceCollection from InputStream
       * @param instream the Stream to read from
@@ -77,7 +67,6 @@ public interface IBiojavaManager extends IBioclipseManager {
       */
     @Recorded
     public BiojavaSequenceList loadSequences(InputStream instream) throws BioclipseException;
-
      /**
      * Load sequenceCollection from InputStream
       * @param instream the Stream to read from
@@ -86,8 +75,6 @@ public interface IBiojavaManager extends IBioclipseManager {
       */
     @Recorded
     public BiojavaSequenceList loadSequences( String path ) throws IOException, BioclipseException;
-
-
     /**
      * Saves a Biojava sequence to the file it is connected to using the format
      * of the file it is connected to
@@ -97,7 +84,6 @@ public interface IBiojavaManager extends IBioclipseManager {
      */
     @Recorded
     public void saveSequence(BiojavaSequence seq) throws IllegalStateException;
-
     /**
      * Saves a Biojava sequence to a given path using the default format
      *
@@ -106,7 +92,6 @@ public interface IBiojavaManager extends IBioclipseManager {
      */
     @Recorded
     public void saveSequence( BiojavaSequence seq, String path );
-
     /**
      * Saves a Biojava sequence to a given path using a given format
      *
@@ -118,26 +103,22 @@ public interface IBiojavaManager extends IBioclipseManager {
     public void saveSequence( BiojavaSequence seq,
                               String path,
                               SequenceFormat format );
-
     /**
      * Create sequence from a plain sequence string. Will set name to empty.
      * @throws ScriptingException
      */
     @Recorded
     public BiojavaSequence createSequence(String content);
-
     /**
      * Create sequence from a plain sequence string. Will set name to empty.
      */
     @Recorded
     public BiojavaSequence createSequenceFromFasta(String content);
-
     /**
      * Create sequence from a name and a plain sequence string (content).
      */
     @Recorded
     public BiojavaSequence createSequence(String name, String content);
-
     /**
      * Load sequence from InputStream
      * @param instream to be loaded
@@ -145,8 +126,6 @@ public interface IBiojavaManager extends IBioclipseManager {
      */
     @Recorded
     public BiojavaSequence loadSequence(InputStream instream);
-
-
     /**
      * Converts a DNA sequence into RNA (transcription)
      *
@@ -155,14 +134,12 @@ public interface IBiojavaManager extends IBioclipseManager {
      */
     @Recorded
     public BiojavaRNASequence DNAtoRNA( BiojavaDNASequence sequence );
-
     /**
      * Convert a BiojavaDNASequence into a BiojavaAASequence. Trancription + translation
      * @throws IllegalArgumentException
      */
     @Recorded
     public BiojavaAASequence DNAToProtein(BiojavaDNASequence sequence);
-
     /**
      * Converts a RNA sequence into DNA (reverse transcription)
      *
@@ -171,13 +148,10 @@ public interface IBiojavaManager extends IBioclipseManager {
      */
     @Recorded
     public BiojavaDNASequence RNAtoDNA(BiojavaRNASequence rnaSeq);
-
     /**
      * Convert a BiojavaRNASequence into a BiojavaAASequence. Biological meaning: Translation.
      * @throws IllegalArgumentException
      */
     @Recorded
     public BiojavaAASequence RNAtoProtein(BiojavaRNASequence sequence);
-
-
 }

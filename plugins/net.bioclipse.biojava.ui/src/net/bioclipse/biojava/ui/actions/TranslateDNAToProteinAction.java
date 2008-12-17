@@ -10,15 +10,11 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.ui.actions;
-
 import java.io.IOException;
-
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.core.domain.IDNASequence;
 import net.bioclipse.core.domain.ISequence;
-
 public class TranslateDNAToProteinAction extends TranslateAction{
-
     @Override
     public ISequence convert(ISequence sequence) throws IOException {
         //Verify input is IDNASequence
@@ -26,10 +22,8 @@ public class TranslateDNAToProteinAction extends TranslateAction{
             showMessage("Input is not a DNA sequence.");
             return null;
         }
-
         IDNASequence dnaSequence = (IDNASequence) sequence;
         BiojavaDNASequence bjDNASeq=null;
-
         //If not a BioJavaSequence, construct one from PlainString
         if (dnaSequence instanceof BiojavaDNASequence) {
             bjDNASeq = (BiojavaDNASequence) dnaSequence;
@@ -41,8 +35,6 @@ public class TranslateDNAToProteinAction extends TranslateAction{
                 throw new IllegalArgumentException();
             }
         }
-
         return getBiojava().DNAToProtein(bjDNASeq);
     }
-
 }

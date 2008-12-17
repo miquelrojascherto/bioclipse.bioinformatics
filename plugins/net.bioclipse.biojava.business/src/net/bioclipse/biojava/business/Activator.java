@@ -10,35 +10,28 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.business;
-
 import net.bioclipse.core.util.LogUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
-
 /**
  * The activator class controls the plug-in life cycle
  * @author jonalv
  *
  */
 public class Activator extends Plugin {
-
     // The plug-in ID
     public static final String PLUGIN_ID = "net.bioclipse.biojava.business";
-
     // The shared instance
     private static Activator plugin;
-    
     private static final Logger logger = Logger.getLogger(Activator.class);
-    
     private ServiceTracker finderTracker;
     /**
      * The constructor
      */
     public Activator() {
     }
-
     /*
      * (non-Javadoc)
      * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
@@ -46,13 +39,11 @@ public class Activator extends Plugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
         finderTracker = new ServiceTracker( context, 
                                             IBiojavaManager.class.getName(), 
                                             null );
         finderTracker.open();
     }
-
     /*
      * (non-Javadoc)
      * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
@@ -61,7 +52,6 @@ public class Activator extends Plugin {
         plugin = null;
         super.stop(context);
     }
-
     /**
      * Returns the shared instance
      *
@@ -70,7 +60,6 @@ public class Activator extends Plugin {
     public static Activator getDefault() {
         return plugin;
     }
-
     public IBiojavaManager getBioJavaManager() {
         IBiojavaManager manager = null;
         try {

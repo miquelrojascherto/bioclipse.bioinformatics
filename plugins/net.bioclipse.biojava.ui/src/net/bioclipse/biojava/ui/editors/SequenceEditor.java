@@ -10,7 +10,6 @@
  *     
  *******************************************************************************/
 package net.bioclipse.biojava.ui.editors;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -33,7 +32,6 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
-
 /**
  * An MultiPageEditor with Molecules on first tabl, Descriptors on second, and 
  * source in XML on third.
@@ -42,14 +40,10 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  *
  */
 public class SequenceEditor extends MultiPageEditorPart implements IResourceChangeListener, IAdaptable{
-
     /** The text editor used in page 1. */
     private TextEditor textEditor;
-
     /** Content of the file */
     String content;
-
-
     /**
      * Creates a multi-page editor example.
      */
@@ -57,7 +51,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
         super();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
     }
-
     /**
      * Creates page 0 of the multi-page editor,
      * which consists of the molecules section
@@ -66,16 +59,11 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
         Composite parent = new Composite(getContainer(), SWT.NONE);
         FillLayout layout=new FillLayout();
         parent.setLayout(layout);
-
         Text txt=new Text(parent, SWT.NONE);
         txt.setText("This is where the sequence(s) should be visualized. TODO: Implement");
-
         int index = addPage(parent);
         setPageText(index, "Sequence");
-
     }
-
-
     /**
      * Creates page 2 of the multi-page editor,
      * which contains a text editor.
@@ -93,8 +81,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
                     e.getStatus());
         }
     }
-
-
     /**
      * Creates the pages of the multi-page editor.
      */
@@ -102,8 +88,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
         createPage0(); //Molecules
 //        createPage1(); //Descriptors
         createPage2(); //qsar.xml
-
-
 //        getSite().getPage().addSelectionListener(this);
     }
     /**
@@ -129,7 +113,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
     public void doSaveAs() {
         //TODO: should it be possible to save as?
         //First we need to update the source ofthe textEditor
-
         textEditor.doSaveAs();
         setPageText(2, textEditor.getTitle());
         setInput(textEditor.getEditorInput());
@@ -184,7 +167,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
             });
         }
     }
-
     /**
      * 
      * Provide Adapters for the JmolEditor
@@ -194,7 +176,6 @@ public class SequenceEditor extends MultiPageEditorPart implements IResourceChan
     public Object getAdapter(Class required) {
         return super.getAdapter(required);
     }
-
     public IEditorPart getPart(){
         return this;
     }

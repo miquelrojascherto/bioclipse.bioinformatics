@@ -10,52 +10,41 @@
  *
  ******************************************************************************/
 package net.bioclipse.biojava.ui.actions;
-
 import java.io.IOException;
-
 import net.bioclipse.biojava.business.Activator;
 import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.core.domain.ISequence;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
-
 /**
  * Abstract class to be overridden by transalte actions
  * @author ola
  *
  */
 public abstract class TranslateAction extends ActionDelegate{
-
     private ISelection selection;
     private IBiojavaManager biojava;
     private ISequence convertedSeq;
-
     public ISequence getConvertedSeq() {
         return convertedSeq;
     }
-
     public void setConvertedSeq(ISequence convertedSeq) {
         this.convertedSeq = convertedSeq;
     }
-
     public IBiojavaManager getBiojava() {
         if (biojava==null) init(null);
         return biojava;
     }
-
     public ISelection getSelection() {
         return selection;
     }
-
     public void setSelection(ISelection selection) {
         this.selection = selection;
     }
-
     /**
      * Init BiojavaManager
      */
@@ -63,17 +52,14 @@ public abstract class TranslateAction extends ActionDelegate{
     public void init(IAction action) {
         biojava=Activator.getDefault().getBioJavaManager();
     }
-
     /**
      * Check input, create BJsequence if necessary, invoke convert() and show result.
      */
     @Override
     public void run(IAction action) {
-
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection sel = (IStructuredSelection) getSelection();
             Object obj=sel.getFirstElement();
-
             if (!(obj instanceof ISequence)) {
                 showMessage("Input is not a Sequence.");
                 return;
@@ -84,7 +70,6 @@ public abstract class TranslateAction extends ActionDelegate{
                 originalSeq=(BiojavaSequence)obj;
             }
             else {//Create a BioJavaAASequence from plainSequence
-
                 String plainSequence=null;
                 try {
                     plainSequence= originalSeq.getPlainSequence();
@@ -92,7 +77,6 @@ public abstract class TranslateAction extends ActionDelegate{
                     showMessage("Could not get sequence from selection. Reason: " + e.getMessage());
                     return;
                 }
-
                 originalSeq=getBiojava().createSequence(plainSequence);
                 if (originalSeq==null){
                     showMessage("This sequence is not a Protein Sequence.");
@@ -100,7 +84,6 @@ public abstract class TranslateAction extends ActionDelegate{
                 }
             }
             */
-
             //Do conversion
             convertedSeq=null;
             try {
@@ -109,9 +92,7 @@ public abstract class TranslateAction extends ActionDelegate{
                 showMessage("Could not convert: " + e.getMessage());
                 return;
             }
-
             if (convertedSeq==null) throw new IllegalArgumentException();
-
             String ret;
             try {
                 ret = "Original sequence: " + originalSeq.getPlainSequence();
@@ -120,18 +101,14 @@ public abstract class TranslateAction extends ActionDelegate{
             } catch (IOException e) {
                 showMessage(e.getMessage());
             }
-
             return;
         }
     }
-
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         this.selection=selection;
     }
-
     public void showMessage(String message) {
-
         //Verify that workbench has been created
         try{
         if (PlatformUI.getWorkbench()==null) return;
@@ -143,17 +120,13 @@ public abstract class TranslateAction extends ActionDelegate{
                 "Message",
                 message);
     }
-
     /**
      * Do the conversion and return the new BioJavaSequence.
      * @return
      * @throws IOException
      */
     public abstract ISequence convert(ISequence sequence) throws IOException;
-
     public void setBiojava(IBiojavaManager biojava) {
         this.biojava = biojava;
     }
-
-
 }

@@ -10,21 +10,16 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.domain;
-
-
 import net.bioclipse.core.domain.BioList;
-
 /**
  * Holds a number of BioJavaSequences in an arraylist
  * @author ola
  *
  */
 public class BiojavaSequenceList extends BioList<BiojavaSequence> {
-
     public BiojavaSequenceList() {
         super();
     }
-    
     public String getName() {
         // TODO Auto-generated method stub
         return null;
