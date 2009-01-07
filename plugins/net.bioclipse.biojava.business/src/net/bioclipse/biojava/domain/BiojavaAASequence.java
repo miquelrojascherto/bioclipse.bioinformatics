@@ -11,14 +11,19 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.domain;
+
 import net.bioclipse.core.domain.IAASequence;
+
 import org.biojavax.bio.seq.RichSequence;
+
 public class BiojavaAASequence extends BiojavaSequence 
                                 implements IAASequence {
+
     public BiojavaAASequence(RichSequence richSequence) {
         super(richSequence);
         // TODO Auto-generated constructor stub
     }
+
     public BiojavaAASequence() {
         // TODO Auto-generated constructor stub
     }

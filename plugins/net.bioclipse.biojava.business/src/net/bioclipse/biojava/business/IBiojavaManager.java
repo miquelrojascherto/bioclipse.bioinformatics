@@ -10,9 +10,12 @@
  *     Ola Spjuth
  *
  ******************************************************************************/
+
 package net.bioclipse.biojava.business;
+
 import java.io.IOException;
 import java.io.InputStream;
+
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
 import net.bioclipse.biojava.domain.BiojavaRNASequence;
@@ -23,11 +26,13 @@ import net.bioclipse.core.PublishedMethod;
 import net.bioclipse.core.Recorded;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.business.IBioclipseManager;
+
 /**
  * @author jonalv, ola
  */
 @PublishedClass("Provides bioinformatics services through the BioJava project.")
 public interface IBiojavaManager extends IBioclipseManager {
+
     /**
      * Enum over the sequence formats supported by the BiojavaManager.
      *
@@ -40,6 +45,7 @@ public interface IBiojavaManager extends IBioclipseManager {
         GENBANK,
         UNIPROT;
     }
+
     /**
      * Converts a BiojavaSequence to a String representation in a given format.
      *
@@ -55,7 +61,9 @@ public interface IBiojavaManager extends IBioclipseManager {
                          + "representation in a given format.")
     public String renderAs( SequenceFormat format,
                             BiojavaSequence seq) throws IOException;
+
     //TODO renderAs giving a stream?
+
     /**
      * Loads a BiojavaSequence from file.
      *
@@ -67,6 +75,8 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="String path",
                      methodSummary="Loads a BiojavaSequence from file.")
     public BiojavaSequence loadSequence( String path ) throws IOException;
+
+
      /**
       * Loads sequenceCollection from InputStream.
       * 
@@ -78,6 +88,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="InputStream instream",
                      methodSummary="Loads sequenceCollection from InputStream.")
     public BiojavaSequenceList loadSequences(InputStream instream) throws BioclipseException;
+
      /**
       * Loads sequenceCollection from InputStream.
       * 
@@ -89,6 +100,8 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="String path",
                      methodSummary="Loads sequenceCollection from InputStream.")
     public BiojavaSequenceList loadSequences( String path ) throws IOException, BioclipseException;
+
+
     /**
      * Saves a Biojava sequence to the file it is connected to using the format
      * of the file it is connected to.
@@ -100,6 +113,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="BiojavaSequence seq",
                      methodSummary="Saves a Biojava sequence to the file it is connected to using the format of the file it is connected to.")
     public void saveSequence(BiojavaSequence seq) throws IllegalStateException;
+
     /**
      * Saves a Biojava sequence to a given path using the default format.
      *
@@ -110,6 +124,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="BiojavaSequence seq, String path",
                      methodSummary="Saves a Biojava sequence to a given path using the default format.")
     public void saveSequence( BiojavaSequence seq, String path );
+
     /**
      * Saves a Biojava sequence to a given path using a given format.
      *
@@ -123,6 +138,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     public void saveSequence( BiojavaSequence seq,
                               String path,
                               SequenceFormat format );
+
     /**
      * Creates sequence from a plain sequence string. Will set name to empty.
      * 
@@ -132,6 +148,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="String content",
                      methodSummary="Creates sequence from a plain sequence string. Will set name to empty.")
     public BiojavaSequence createSequence(String content);
+
     /**
      * Creates sequence from a plain sequence string. Will set name to empty.
      */
@@ -139,6 +156,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="String content",
                      methodSummary="Creates sequence from a plain sequence string. Will set name to empty.")
     public BiojavaSequence createSequenceFromFasta(String content);
+
     /**
      * Creates sequence from a name and a plain sequence string (content).
      */
@@ -146,6 +164,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="String name, String content",
                      methodSummary="Creates sequence from a name and a plain sequence string (content).")
     public BiojavaSequence createSequence(String name, String content);
+
     /**
      * Loads sequence from InputStream.
      * 
@@ -156,6 +175,8 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="InputStream instream",
                      methodSummary="Loads sequence from InputStream.")
     public BiojavaSequence loadSequence(InputStream instream);
+
+
     /**
      * Converts a DNA sequence into RNA (transcription).
      *
@@ -166,6 +187,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="BiojavaDNASequence sequence",
                      methodSummary="Converts a DNA sequence into RNA (transcription).")
     public BiojavaRNASequence DNAtoRNA( BiojavaDNASequence sequence );
+
     /**
      * Converts a BiojavaDNASequence into a BiojavaAASequence.
      * Trancription + translation.
@@ -176,6 +198,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="BiojavaDNASequence sequence",
                      methodSummary="Converts a BiojavaDNASequence into a BiojavaAASequence.")
     public BiojavaAASequence DNAToProtein(BiojavaDNASequence sequence);
+
     /**
      * Converts a RNA sequence into DNA (reverse transcription).
      *
@@ -186,6 +209,7 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="BiojavaRNASequence rnaSeq",
                      methodSummary="Converts a RNA sequence into DNA (reverse transcription).")
     public BiojavaDNASequence RNAtoDNA(BiojavaRNASequence rnaSeq);
+
     /**
      * Converts a BiojavaRNASequence into a BiojavaAASequence.
      * Biological meaning: Translation.
@@ -196,4 +220,6 @@ public interface IBiojavaManager extends IBioclipseManager {
     @PublishedMethod(params="BiojavaRNASequence sequence",
                      methodSummary="Convert a BiojavaRNASequence into a BiojavaAASequence.")
     public BiojavaAASequence RNAtoProtein(BiojavaRNASequence sequence);
+
+
 }

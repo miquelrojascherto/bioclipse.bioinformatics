@@ -10,16 +10,23 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.ui.actions;
+
 import java.io.IOException;
+
 import org.apache.log4j.Logger;
+
 import net.bioclipse.core.domain.ISequence;
+
+
 /**
  * Action to translate an ISequence to DNA
  * @author ola
  *
  */
 public class TranslateRNAToProteinAction extends TranslateAction{
+
     private static final Logger logger = Logger.getLogger(TranslateRNAToProteinAction.class);
+    
     @Override
     public ISequence convert(ISequence sequence) throws IOException {
         logger.warn("TranslateRNAToProteinAction not implemented: TODO");

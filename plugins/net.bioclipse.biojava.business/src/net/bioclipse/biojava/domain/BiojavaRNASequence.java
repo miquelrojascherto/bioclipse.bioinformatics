@@ -11,14 +11,20 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.domain;
+
 import org.biojavax.bio.seq.RichSequence;
+
 import net.bioclipse.core.domain.IRNASequence;
+
 public class BiojavaRNASequence extends BiojavaSequence 
                                 implements IRNASequence {
+
     public BiojavaRNASequence(RichSequence richSequence) {
         super(richSequence);
         // TODO Auto-generated constructor stub
     }
+
     public BiojavaRNASequence() {
+        
     }
 }

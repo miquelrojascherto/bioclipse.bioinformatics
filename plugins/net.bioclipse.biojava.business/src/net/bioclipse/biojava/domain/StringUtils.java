@@ -6,10 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  *****************************************************************************/
+
 package net.bioclipse.biojava.domain;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 public class StringUtils {
+
     /**
      * Used to remove the first line (until linebreak) in a string, e.g. to remove header
      * line in a FASTA string
@@ -17,8 +21,10 @@ public class StringUtils {
      * @return
      */
     public static String removeUntilFirstNewline(String content){
+
         Pattern EVERYTHING_AFTER_FIRST_NEWLINE
           = Pattern.compile( "[^\\n\\r]*[\\n\\r]+(.*)$", Pattern.DOTALL );
+
             Matcher matcher = EVERYTHING_AFTER_FIRST_NEWLINE.matcher(content);
             if ( matcher.find() ) {
                 String ret = matcher.group(1);
@@ -29,4 +35,6 @@ public class StringUtils {
                 return content;
             }
     }
+    
+    
 }

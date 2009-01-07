@@ -11,11 +11,14 @@
  *
  ******************************************************************************/
 package net.bioclipse.biojava.business;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import net.bioclipse.biojava.domain.BiojavaAASequence;
 import net.bioclipse.biojava.domain.BiojavaDNASequence;
@@ -25,19 +28,27 @@ import net.bioclipse.biojava.domain.BiojavaSequenceList;
 import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.domain.ISequence;
 import net.bioclipse.core.util.LogUtils;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import testData.TestData;
+
 /**
  * @author jonalv, ola
  *
  */
 public class BiojavaManagerTest {
+
     private Logger logger = Logger.getLogger(BiojavaManagerTest.class);
+
     private IBiojavaManager biojava;
+
     @Before
     public void setup() {
         biojava = new BiojavaManager();
+
+
         //Introduce the allowed formats
         try{
             Class.forName("org.biojavax.bio.seq.io.EMBLFormat");
@@ -53,8 +64,11 @@ public class BiojavaManagerTest {
             System.out.println("Class not found" + e);
         }
     }
+
+
     @Test
     public void testCreateSequences() {
+
         //A DNA Sequence
         ISequence seq=biojava.createSequence("CCCTCGGCTTC");
         try {
@@ -62,6 +76,7 @@ public class BiojavaManagerTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
+
         //A Protein Sequence
         seq=biojava.createSequence("SEQUENCE");
         try {
@@ -69,6 +84,7 @@ public class BiojavaManagerTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
+
         /*
         //An RNA Sequence
         seq=biojava.createSequence("CCCUCGGCUUC");
@@ -79,16 +95,21 @@ public class BiojavaManagerTest {
         }
         */
     }
+
     @Test
     public void testCreateNamedSequences() {
+
         //A DNA Sequence
         ISequence seq=biojava.createSequence("sequence1","CCCTCGGCTTC");
         try {
             assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
+
             //Right now: don't care about name as it is set by BioJava
+
         } catch (IOException e) {
             fail(e.getMessage());
         }
+
         //A Protein Sequence
         seq=biojava.createSequence("sequence2","SEQUENCE");
         try {
@@ -96,6 +117,7 @@ public class BiojavaManagerTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
+
         /*
         //An RNA Sequence
         seq=biojava.createSequence("CCCUCGGCUUC");
@@ -106,16 +128,22 @@ public class BiojavaManagerTest {
         }
         */
     }
+
+
     @Test
     public void testCreateFastaSequences() {
+
         //A DNA Sequence
         ISequence seq=biojava.createSequenceFromFasta(">sequence1\nCCCTCGGCTTC");
         try {
             assertEquals("CCCTCGGCTTC", seq.getPlainSequence().trim().toUpperCase());
+
             //Right now: don't care about name as it is set by BioJava
+
         } catch (IOException e) {
             fail(e.getMessage());
         }
+
         //A Protein Sequence
         seq=biojava.createSequenceFromFasta(">sequence2\nSEQUENCE");
         try {
@@ -123,6 +151,7 @@ public class BiojavaManagerTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
+
         /*
         //An RNA Sequence
         seq=biojava.createSequence("CCCUCGGCUUC");
@@ -133,6 +162,10 @@ public class BiojavaManagerTest {
         }
         */
     }
+
+
+
+
     @Test
     public void testToFasta() {
         BiojavaSequence seq=null;
@@ -148,6 +181,7 @@ public class BiojavaManagerTest {
         }
         assertNotNull(seq);
 //        assertEquals( "Sequence", seq.getName());
+
         try {
             assertEquals( "SEQUENCE", seq.getPlainSequence().trim() );
         } catch (IOException e) {
@@ -155,6 +189,7 @@ public class BiojavaManagerTest {
             fail (e.getMessage());
         }
     }
+
     @Test
     public void testLoadFastaSequences() {
         BiojavaSequence seq=null;
@@ -163,10 +198,12 @@ public class BiojavaManagerTest {
             seq = biojava.loadSequence( TestData.getPathToAAFastaSequence() );
             assertNotNull( seq );
             assertEquals( "SEQUENCE", seq.getPlainSequence().trim().toUpperCase() );
+
             //Test read DNA as fasta
             seq = biojava.loadSequence( TestData.getPathToDNAFastaSequence() );
             assertNotNull( seq );
             assertEquals( "GATTACA", seq.getPlainSequence().trim().toUpperCase() );
+
             /*
             //Test read RNA as fasta
             seq = biojava.loadSequence( TestData.getPathToRNAFastaSequence() );
@@ -179,7 +216,9 @@ public class BiojavaManagerTest {
             LogUtils.debugTrace(logger, e);
             fail (e.getMessage());
         }
+
     }
+
     @Test
     public void testDNAtoRNA() {
         BiojavaSequence seq=null;
@@ -192,9 +231,12 @@ public class BiojavaManagerTest {
             LogUtils.debugTrace(logger, e);
             fail (e.getMessage());
         }
+
         assertNotNull(seq);
+
         assertTrue(seq instanceof BiojavaDNASequence);
         BiojavaDNASequence dnaSeq = (BiojavaDNASequence) seq;
+
         try {
             assertEquals( "GATTACA", seq.getPlainSequence().trim().toUpperCase() );
             BiojavaRNASequence rnaSeq;
@@ -208,16 +250,22 @@ public class BiojavaManagerTest {
             fail(e.getMessage());
         }
     }
+
     @Test
     public void testDNAtoProtein() {
         BiojavaSequence seq=null;
             seq = biojava.createSequence("CTCCTCGCGAAACGATACGAT");
+
         assertNotNull(seq);
+
         assertTrue(seq instanceof BiojavaDNASequence);
         BiojavaDNASequence dnaSeq = (BiojavaDNASequence) seq;
+
         try {
+
             BiojavaAASequence rnaSeq = biojava.DNAToProtein(dnaSeq);
             assertEquals( "LLAKRYD", rnaSeq.getPlainSequence().trim().toUpperCase() );
+
         } catch (IOException e) {
             LogUtils.debugTrace(logger, e);
             fail(e.getMessage());
@@ -226,25 +274,35 @@ public class BiojavaManagerTest {
             fail(e.getMessage());
         }
     }
+
     @Test
     public void testRNAtoProtein() {
         fail("Not implemented");
     }
+
     @Test
     public void testRNAtoDNA() {
         fail("Not implemented");
     }
+
+
     /*
     @Test
     public void testRNAtoDNA() {
+
         BiojavaSequence seq = biojava.createSequence("GAUUACA");
+
         assertNotNull(seq);
+
         assertTrue(seq instanceof BiojavaRNASequence);
         BiojavaRNASequence rnaSeq = (BiojavaRNASequence) seq;
+
         try {
             //Check correctly read
             assertEquals( "GAUUACA", rnaSeq.getPlainSequence().trim().toUpperCase() );
+
             BiojavaDNASequence dnaSeq = biojava.RNAtoDNA(rnaSeq);
+
             //Check correctly converted
             assertEquals( "GATTACA", dnaSeq.getPlainSequence().trim().toUpperCase() );
         } catch (IOException e) {
@@ -262,9 +320,11 @@ public class BiojavaManagerTest {
         sequenceCollection = biojava.loadSequences( TestData.getPathToMultipleSequences() );
         assertNotNull( sequenceCollection );
         assertEquals( 2, sequenceCollection.size() );
+
         //Check individual sequences
         BiojavaSequence seq1=sequenceCollection.get(0);
         BiojavaSequence seq2=sequenceCollection.get(1);
+
         try {
             assertEquals(341, seq1.getPlainSequence().length());
             assertEquals(342, seq2.getPlainSequence().length());

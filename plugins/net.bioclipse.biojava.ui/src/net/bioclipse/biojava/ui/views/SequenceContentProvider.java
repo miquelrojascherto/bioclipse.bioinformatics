@@ -10,11 +10,13 @@
  *
  ******************************************************************************/
 package net.bioclipse.biojava.ui.views;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.bioclipse.biojava.business.Activator;
 import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.biojava.domain.BiojavaSequenceList;
@@ -22,6 +24,7 @@ import net.bioclipse.core.business.BioclipseException;
 import net.bioclipse.core.domain.IBioObject;
 import net.bioclipse.core.domain.ISequence;
 import net.bioclipse.core.util.LogUtils;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -35,6 +38,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
+
 /**
  * This ContentProvider hooks into the CNF to list if IResource contains one
  * or many ISequences.
@@ -43,12 +47,19 @@ import org.eclipse.swt.widgets.Display;
  */
 public class SequenceContentProvider implements ITreeContentProvider,
     IResourceChangeListener, IResourceDeltaVisitor {
+
     private static final Logger logger = Logger.getLogger(SequenceContentProvider.class);
+
     private static final Object[] NO_CHILDREN = new Object[0];
+
     private final List<String> ISequence_EXT;
+
     private final Map<IFile, BiojavaSequenceList> cachedModelMap;
+
     private StructuredViewer viewer;
+
     IBiojavaManager biojava;
+
     //Register us as listener for resource changes
     public SequenceContentProvider() {
         ResourcesPlugin.getWorkspace().addResourceChangeListener(
@@ -59,6 +70,8 @@ public class SequenceContentProvider implements ITreeContentProvider,
         registerFileExtensions();
         biojava=Activator.getDefault().getBioJavaManager();
     }
+
+
     private void registerFileExtensions() {
         ISequence_EXT.add("EMBL");
         ISequence_EXT.add("SEQ");
@@ -66,17 +79,23 @@ public class SequenceContentProvider implements ITreeContentProvider,
         ISequence_EXT.add("GBK");
         //TODO: add more file extensions
     }
+
+
     public Object[] getChildren(Object parentElement) {
+
         if(parentElement instanceof IFile) {
             IFile modelFile = (IFile) parentElement;
             if (ISequence_EXT.contains(
                     modelFile.getFileExtension().toUpperCase())) {
+
                 BiojavaSequenceList col = cachedModelMap.get(modelFile);
+
                 if (col != null) {
                     Object[] children = col.toArray(new ISequence[0]);
                     return children != null ? children : NO_CHILDREN;
                 }
                 else if (updateModel(modelFile) != null) {
+
                     BiojavaSequenceList col2 = cachedModelMap.get(modelFile);
                     if (col2 != null) {
                         Object[] children = col2.toArray(new ISequence[0]);
@@ -87,10 +106,13 @@ public class SequenceContentProvider implements ITreeContentProvider,
         }
         return NO_CHILDREN;
     }
+
+
     /**
      * If an ISequence, get the IResource
      */
     public Object getParent(Object element) {
+
         if (element instanceof IBioObject) {
             IBioObject bobj = (IBioObject) element;
             if (bobj.getResource() != null) return bobj.getResource();
@@ -101,6 +123,8 @@ public class SequenceContentProvider implements ITreeContentProvider,
         }
         return null;
     }
+
+
     public boolean hasChildren(Object element) {
         if (element instanceof ISequence) {
             return false;
@@ -111,9 +135,13 @@ public class SequenceContentProvider implements ITreeContentProvider,
         }
         return false;
     }
+
+
     public Object[] getElements(Object parentElement) {
         return getChildren(parentElement);
     }
+
+
     /**
      * We need to remove listener and dispose of cache on exit
      */
@@ -121,6 +149,8 @@ public class SequenceContentProvider implements ITreeContentProvider,
         cachedModelMap.clear();
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
     }
+
+
     /**
      * When input changes, clear cache so that we will reload content later
      */
@@ -129,10 +159,13 @@ public class SequenceContentProvider implements ITreeContentProvider,
             cachedModelMap.clear();
         viewer = (StructuredViewer) aViewer;
     }
+
+
     /**
      * If resources changed
      */
     public void resourceChanged(IResourceChangeEvent event) {
+
         //we are only interested in POST_CHANGE events
         if (event.getType() != IResourceChangeEvent.POST_CHANGE)
             return;
@@ -149,18 +182,24 @@ public class SequenceContentProvider implements ITreeContentProvider,
         if (docDelta == null)
             return;
     }
+
+
     /**
      * Handle deltas for resource changes
      */
     public boolean visit(IResourceDelta delta) throws CoreException {
+
         IResource resource = delta.getResource();
+
         // Only care about IFile with correct extension
         if (resource == null) return true;
         if (!(resource.getType() == IResource.FILE &&
                 ISequence_EXT.contains(
                         resource.getFileExtension().toUpperCase())))
             return true;
+
         final IFile file = (IFile) resource;
+
         switch (delta.getKind()) {
         case IResourceDelta.ADDED :
             // handle added resource
@@ -179,8 +218,10 @@ public class SequenceContentProvider implements ITreeContentProvider,
                 logger.debug("Not implemented: TODO: Handle changed resource: " + file.getName());
             break;
         }
+
         //Update the model for the viewer
         updateModel(file);
+
         //Post the update to the viewer
         Display display = viewer.getControl().getDisplay();
         if (!display.isDisposed()) {
@@ -195,11 +236,14 @@ public class SequenceContentProvider implements ITreeContentProvider,
         }
         return true;
     }
+
+
     /**
      * Load the model from the given file, if possible.
      * @param modelFile The IFile which contains the persisted model
      */
     private synchronized BiojavaSequenceList updateModel(IFile modelFile) {
+
         if(ISequence_EXT.contains(modelFile.getFileExtension().toUpperCase())) {
             BiojavaSequenceList model;
             if (modelFile.exists()) {
@@ -211,13 +255,17 @@ public class SequenceContentProvider implements ITreeContentProvider,
                 } catch (BioclipseException e) {
                     return null;
                 }
+
                 if (model == null) return null;
+
                 if(logger.isDebugEnabled()) {
                     logger.debug("File: "+ modelFile+ " contained: "
                             + model.size() + " ISequences");
                 }
+
                 cachedModelMap.put(modelFile, model);
                 return model;
+
             } else {
                 cachedModelMap.remove(modelFile);
             }

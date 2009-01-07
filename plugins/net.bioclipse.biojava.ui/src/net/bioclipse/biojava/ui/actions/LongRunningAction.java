@@ -10,11 +10,15 @@
  *     
  ******************************************************************************/
 package net.bioclipse.biojava.ui.actions;
+
 import java.lang.reflect.InvocationTargetException;
+
 import net.bioclipse.core.jobs.AbstractJob;
 import net.bioclipse.core.jobs.ActionJobRunner;
 import net.bioclipse.core.util.LogUtils;
+
 import org.apache.log4j.Logger;
+    
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,29 +26,43 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
+
+
 public class LongRunningAction extends ActionDelegate {
+
     private static final Logger logger = 
         Logger.getLogger(LongRunningAction.class);
+    
+    
     /**
      * This action is to demonstrate long running operations in Bioclipse.
      */
     @Override
     public void run(IAction action) {
+
         LongJob job = new LongJob();
         job.setDelay(0);
         ImageDescriptor icon = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ELEMENT);
         ActionJobRunner.getInstance().runSingleAction(job, true, false, icon);
+
     }
+
     class LongJob extends AbstractJob{
+
+
         public String getJobDescription() {
             return getJobName();
         }
+
         public String getJobName() {
             return "Long-running job";
         }
+
+
         public int getTotalTime() {
             return 5;
         }
+
         public void run(IProgressMonitor monitor) throws InvocationTargetException,
         InterruptedException {
             monitor.subTask("Init");
@@ -78,12 +96,17 @@ public class LongRunningAction extends ActionDelegate {
             }
             sleep(500);
             monitor.worked(1);
+
             if (this.fail) {
                 throw new InvocationTargetException(new IllegalArgumentException("The real cause."),"Error executing job"); //$NON-NLS-1$
             }
+
             showResults();
+
         }
+
         private void showResults() {
+
               PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
                         MessageDialog.openInformation(
@@ -92,7 +115,9 @@ public class LongRunningAction extends ActionDelegate {
                                 "The reults are: WEEHOW");
                     }
                 });
+
         }
+
         public void sleep(int ms) {
             try {
                 Thread.sleep(ms * 1);
@@ -101,4 +126,5 @@ public class LongRunningAction extends ActionDelegate {
             }
         }
     }
+
 }
