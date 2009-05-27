@@ -396,7 +396,7 @@ public class BiojavaManager implements IBiojavaManager {
     }
 
 
-    public String getNamespace() {
+    public String getManagerName() {
         return "biojava";
     }
 }
