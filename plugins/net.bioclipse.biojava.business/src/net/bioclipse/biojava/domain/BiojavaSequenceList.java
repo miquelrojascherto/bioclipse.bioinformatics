@@ -12,14 +12,14 @@
 package net.bioclipse.biojava.domain;
 
 
-import net.bioclipse.core.domain.BioList;
+import net.bioclipse.core.domain.RecordableList;
 
 /**
  * Holds a number of BioJavaSequences in an arraylist
  * @author ola
  *
  */
-public class BiojavaSequenceList extends BioList<BiojavaSequence> {
+public class BiojavaSequenceList extends RecordableList<BiojavaSequence> {
 
     public BiojavaSequenceList() {
         super();

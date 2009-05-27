@@ -16,7 +16,7 @@ import java.io.InputStream;
 import net.bioclipse.biojava.business.BiojavaManager;
 import net.bioclipse.biojava.business.IBiojavaManager;
 import net.bioclipse.biojava.domain.BiojavaSequence;
-import net.bioclipse.core.domain.BioList;
+import net.bioclipse.core.domain.RecordableList;
 import net.bioclipse.core.domain.ISequence;
 
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class TestLoadSequences {
     @Test
     public void TestBiolist(){
 
-        BioList<BiojavaSequence> list=new BioList<BiojavaSequence>();
+        RecordableList<BiojavaSequence> list=new RecordableList<BiojavaSequence>();
 
         InputStream stream = getClass().getResourceAsStream("/net/bioclipse/biojava/ui/test/resources/111076.gbk");
         BiojavaSequence tseq=biojava.loadSequence(stream);
