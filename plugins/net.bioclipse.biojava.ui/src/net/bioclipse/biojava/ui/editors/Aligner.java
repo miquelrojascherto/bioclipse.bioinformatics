@@ -440,13 +440,17 @@ public class Aligner extends EditorPart {
                 int dragXDistance = dragEnd.x - dragStart.x,
                     dragYDistance = dragEnd.y - dragStart.y,
                     xLeft
-                      = selectionTopLeftInSquares.x * squareSize + dragXDistance,
+                      = selectionTopLeftInSquares.x     * squareSize
+                        + dragXDistance,
                     yTop
-                      = selectionTopLeftInSquares.y * squareSize + dragYDistance,
+                      = selectionTopLeftInSquares.y     * squareSize
+                        + dragYDistance,
                     xRight
-                      = selectionBottomRightInSquares.x   * squareSize + dragXDistance,
+                      = selectionBottomRightInSquares.x * squareSize
+                        + dragXDistance,
                     yBottom
-                      = selectionBottomRightInSquares.y   * squareSize + dragYDistance;
+                      = selectionBottomRightInSquares.y * squareSize
+                        + dragYDistance;
                 
                 gc.setForeground( selectionColor1 );
                 gc.drawRectangle( xLeft,
@@ -477,13 +481,17 @@ public class Aligner extends EditorPart {
                 int dragXDistance = dragEnd.x - dragStart.x,
                     dragYDistance = dragEnd.y - dragStart.y,
                     xLeft
-                      = selectionTopLeftInSquares.x * squareSize + dragXDistance,
+                      = selectionTopLeftInSquares.x     * squareSize
+                        + dragXDistance,
                     yTop
-                      = selectionTopLeftInSquares.y * squareSize + dragYDistance,
+                      = selectionTopLeftInSquares.y     * squareSize
+                        + dragYDistance,
                     xRight
-                      = selectionBottomRightInSquares.x   * squareSize + dragXDistance,
+                      = selectionBottomRightInSquares.x * squareSize
+                        + dragXDistance,
                     yBottom
-                      = selectionBottomRightInSquares.y   * squareSize + dragYDistance;
+                      = selectionBottomRightInSquares.y * squareSize
+                        + dragYDistance;
                 
                 if ( selectionVisible
                      && xLeft <= e.x && e.x <= xRight
