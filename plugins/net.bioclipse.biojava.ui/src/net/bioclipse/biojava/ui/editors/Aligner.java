@@ -281,6 +281,20 @@ public class Aligner extends EditorPart {
         selectionBottomRightInSquares.y = yBottom;
     }
     
+    // Returns the four boundary coordinates, in pixels, of the current
+    // selection, with the current dragged distance taken into account.
+    private int[] boundaries() {
+        int dragXDistance = dragEnd.x - dragStart.x,
+            dragYDistance = dragEnd.y - dragStart.y,
+
+        xLeft   = selectionTopLeftInSquares.x     * squareSize + dragXDistance,
+        yTop    = selectionTopLeftInSquares.y     * squareSize + dragYDistance,
+        xRight  = selectionBottomRightInSquares.x * squareSize + dragXDistance,
+        yBottom = selectionBottomRightInSquares.y * squareSize + dragYDistance;
+
+        return new int[] { xLeft, yTop, xRight, yBottom };
+    }
+
     @Override
     public void createPartControl( Composite parent ) {
         
@@ -437,21 +451,12 @@ public class Aligner extends EditorPart {
                 if (!selectionVisible)
                     return;
 
-                int dragXDistance = dragEnd.x - dragStart.x,
-                    dragYDistance = dragEnd.y - dragStart.y,
-                    xLeft
-                      = selectionTopLeftInSquares.x     * squareSize
-                        + dragXDistance,
-                    yTop
-                      = selectionTopLeftInSquares.y     * squareSize
-                        + dragYDistance,
-                    xRight
-                      = selectionBottomRightInSquares.x * squareSize
-                        + dragXDistance,
-                    yBottom
-                      = selectionBottomRightInSquares.y * squareSize
-                        + dragYDistance;
-                
+                int boundaries[] = boundaries(),
+                    xLeft   = boundaries[0],
+                    yTop    = boundaries[1],
+                    xRight  = boundaries[2],
+                    yBottom = boundaries[3];
+
                 gc.setForeground( selectionColor1 );
                 gc.drawRectangle( xLeft,
                                   yTop,
@@ -478,20 +483,11 @@ public class Aligner extends EditorPart {
                 if (e.button != 1)
                     return;
 
-                int dragXDistance = dragEnd.x - dragStart.x,
-                    dragYDistance = dragEnd.y - dragStart.y,
-                    xLeft
-                      = selectionTopLeftInSquares.x     * squareSize
-                        + dragXDistance,
-                    yTop
-                      = selectionTopLeftInSquares.y     * squareSize
-                        + dragYDistance,
-                    xRight
-                      = selectionBottomRightInSquares.x * squareSize
-                        + dragXDistance,
-                    yBottom
-                      = selectionBottomRightInSquares.y * squareSize
-                        + dragYDistance;
+                int boundaries[] = boundaries(),
+                    xLeft   = boundaries[0],
+                    yTop    = boundaries[1],
+                    xRight  = boundaries[2],
+                    yBottom = boundaries[3];
                 
                 if ( selectionVisible
                      && xLeft <= e.x && e.x <= xRight
